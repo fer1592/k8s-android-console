@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/clustersFragment">
+
+    <fragment
+        android:id="@+id/clustersFragment"
+        android:name="com.example.k8s_android_console.ClustersFragment"
+        android:label="fragment_cluster"
+        tools:layout="@layout/fragment_cluster" />
+    <fragment
+        android:id="@+id/helpFragment"
+        android:name="com.example.k8s_android_console.HelpFragment"
+        android:label="fragment_help"
+        tools:layout="@layout/fragment_help" />
+</navigation>

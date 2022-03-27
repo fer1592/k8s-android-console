@@ -9,10 +9,27 @@
         android:id="@+id/clustersFragment"
         android:name="com.example.k8s_android_console.ClustersFragment"
         android:label="fragment_cluster"
-        tools:layout="@layout/fragment_cluster" />
+        tools:layout="@layout/fragment_clusters" >
+        <action
+            android:id="@+id/action_clustersFragment_to_setClusterFragment"
+            app:destination="@id/setClusterFragment" />
+    </fragment>
     <fragment
         android:id="@+id/helpFragment"
         android:name="com.example.k8s_android_console.HelpFragment"
         android:label="fragment_help"
         tools:layout="@layout/fragment_help" />
+    <fragment
+        android:id="@+id/setClusterFragment"
+        android:name="com.example.k8s_android_console.SetClusterFragment"
+        android:label="fragment_set_cluster"
+        tools:layout="@layout/fragment_set_cluster" >
+        <argument
+            android:name="clusterId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <action
+            android:id="@+id/action_setClusterFragment_to_clustersFragment"
+            app:destination="@id/clustersFragment" />
+    </fragment>
 </navigation>

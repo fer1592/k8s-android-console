@@ -7,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.k8s_android_console.databinding.FragmentClusterBinding
+import androidx.navigation.fragment.findNavController
+import com.example.k8s_android_console.databinding.FragmentClustersBinding
 
 class ClustersFragment : Fragment() {
-    private var _binding : FragmentClusterBinding? = null
+    private var _binding : FragmentClustersBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -18,15 +19,15 @@ class ClustersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Get the data binding and view
-        _binding = FragmentClusterBinding.inflate(inflater, container, false)
+        _binding = FragmentClustersBinding.inflate(inflater, container, false)
         val view = binding.root
 
         // Builds the database if it doesn't exists
         val application = requireNotNull(this.activity).application
         val dao = ClusterDatabase.getInstance(application).clusterDAO
 
-        // Gets the Cluster View Model
-        val clusterViewModelFactory = ClusterViewModelFactory(dao)
+        // Gets the Clusters View Model
+        val clusterViewModelFactory = ClustersViewModelFactory(dao)
         val clustersViewModel = ViewModelProvider(this, clusterViewModelFactory).get(ClustersViewModel::class.java)
 
         // Sets the cluster View Model variable in the layout
@@ -36,7 +37,11 @@ class ClustersFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         // Sets adapter for the cluster recycler view and observes for any changes in the clusters
-        val clusterAdapter = ClusterItemAdapter()
+        val clusterAdapter = ClusterItemAdapter{ clusterId ->
+            // Changes the navigateToCluster value, to indicate that we want to navigate to a specific cluster to edit it
+            clustersViewModel.onClusterClicked(clusterId)
+        }
+
         binding.clustersList.adapter = clusterAdapter
         clustersViewModel.clusters.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -44,7 +49,22 @@ class ClustersFragment : Fragment() {
             }
         })
 
-        return  view
+        // Observe the navigateToCluster live data to navigate to the cluster when the value changes
+        clustersViewModel.navigateToCluster.observe(viewLifecycleOwner, Observer { clusterId ->
+            clusterId?.let {
+                val action = ClustersFragmentDirections.actionClustersFragmentToSetClusterFragment(clusterId)
+                this.findNavController().navigate(action)
+                clustersViewModel.onClusterNavigated()
+            }
+        })
+
+        // Set onclicklistener for the FAB to add a new cluster
+        binding.addCluster.setOnClickListener{
+            val action = ClustersFragmentDirections.actionClustersFragmentToSetClusterFragment(-1)
+            this.findNavController().navigate(action)
+        }
+
+        return view
     }
 
     override fun onDestroyView() {

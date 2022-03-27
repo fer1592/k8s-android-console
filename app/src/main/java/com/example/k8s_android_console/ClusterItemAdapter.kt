@@ -4,17 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.cardview.widget.CardView
 import com.example.k8s_android_console.databinding.ClusterItemBinding
 
-class ClusterItemAdapter : ListAdapter<Cluster, ClusterItemAdapter.ClusterItemViewHolder>(ClusterDiffItemCallback()) {
+class ClusterItemAdapter(val clickListener: (clusterId: Long) -> Unit) : ListAdapter<Cluster, ClusterItemAdapter.ClusterItemViewHolder>(ClusterDiffItemCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup,viewType: Int)
         : ClusterItemViewHolder = ClusterItemViewHolder.inflateFrom(parent)
 
     override fun onBindViewHolder(holder: ClusterItemAdapter.ClusterItemViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, clickListener)
     }
 
     class ClusterItemViewHolder(val binding: ClusterItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -27,8 +26,11 @@ class ClusterItemAdapter : ListAdapter<Cluster, ClusterItemAdapter.ClusterItemVi
             }
         }
 
-        fun bind(item: Cluster) {
+        fun bind(item: Cluster, clickListener: (clusterId: Long) -> Unit) {
             binding.cluster = item
+            binding.root.setOnClickListener{
+                clickListener(item.clusterId)
+            }
         }
     }
 }

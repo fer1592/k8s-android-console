@@ -22,11 +22,9 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:textSize="36sp"
                 android:textAlignment="viewStart"
                 app:layout_constraintWidth_percent="0.7"
-                android:maxLines="1"
-                android:ellipsize="end"
+                style="@style/RecyclerViewItemMain"
                 android:text="@{cluster.clusterName}"/>
 
             <TextView
@@ -35,11 +33,9 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cluster_name"
-                android:textSize="14sp"
                 android:textAlignment="viewStart"
                 app:layout_constraintWidth_percent="0.7"
-                android:maxLines="1"
-                android:ellipsize="end"
+                style="@style/RecyclerViewItemComplementary"
                 android:text="@{cluster.clusterAddress}" />
 
             <TextView
@@ -50,8 +46,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cluster_name"
                 app:layout_constraintTop_toTopOf="@+id/cluster_name"
-                android:textSize="14sp"
                 android:textAlignment="viewEnd"
+                style="@style/RecyclerViewItemComplementary"
                 android:text="@{cluster.clusterAuthenticationMethod}" />
 
             <TextView
@@ -61,7 +57,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cluster_address"
                 app:layout_constraintTop_toTopOf="@+id/cluster_address"
-                android:textSize="14sp"
+                style="@style/RecyclerViewItemComplementary"
                 android:textAlignment="viewEnd" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

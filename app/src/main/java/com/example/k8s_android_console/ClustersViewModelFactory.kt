@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import java.lang.IllegalArgumentException
 
-class ClusterViewModelFactory(private val dao: ClusterDAO, private val clusterId: Long) : ViewModelProvider.Factory {
+class ClustersViewModelFactory(private val dao: ClusterDAO) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ClusterViewModel::class.java)){
-            return ClusterViewModel(dao,clusterId) as T
+        if (modelClass.isAssignableFrom(ClustersViewModel::class.java)){
+            return ClustersViewModel(dao) as T
         }
         throw IllegalArgumentException("Unknown ViewModel")
     }

@@ -12,15 +12,23 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
     private val _navigateToClusterList = MutableLiveData<Boolean>(false)
     val navigateToClusterList: LiveData<Boolean>
         get() = _navigateToClusterList
-
-    fun addCluster(clusterName: String, clusterAddress: String, clusterAuthMethodIndex: Int, clusterUsername: String, clusterPassword: String) {
+    private val _requestUsernamePassword = MutableLiveData<Boolean>(true)
+    val requestUsernamePassword: LiveData<Boolean>
+        get() = _requestUsernamePassword
+    private val _requestBearerToken = MutableLiveData<Boolean>(false)
+    val requestBearerToken: LiveData<Boolean>
+        get() = _requestBearerToken
+    fun addCluster(clusterName: String, clusterAddress: String, clusterPort: String, clusterAuthMethodIndex: Int, clusterUsername: String,
+                   clusterPassword: String, clusterBearerToken: String) {
         viewModelScope.launch {
             val newCluster = Cluster(
                 clusterName = clusterName,
                 clusterAddress = clusterAddress,
+                clusterPort = clusterPort.toInt(),
                 clusterAuthenticationMethod = authMethods[clusterAuthMethodIndex],
                 clusterUsername = clusterUsername,
-                clusterPassword = clusterPassword
+                clusterPassword = clusterPassword,
+                clusterBearerToken = clusterBearerToken
             )
             dao.insert(newCluster)
             _navigateToClusterList.value = true
@@ -46,7 +54,17 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
     }
 
     fun setAuthMethod(authMethodPosition: Int){
-        Log.i("Set Auth", "Cluster Value: ${cluster.value}\nAuth Method Index: ${authMethodPosition}")
+        when(authMethodPosition){
+            0 -> {
+                _requestUsernamePassword.value = true
+                _requestBearerToken.value = false
+            }
+            1 -> {
+                _requestUsernamePassword.value = false
+                _requestBearerToken.value = true
+            }
+        }
+        Log.i("Fruta", "AuthMethodPos: ${authMethodPosition} usernamePass: ${requestUsernamePassword} Bearer: ${requestBearerToken}")
         if(cluster.value != null){
             cluster.value!!.clusterAuthenticationMethod = authMethods[authMethodPosition]
         }

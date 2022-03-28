@@ -20,58 +20,102 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/cluster_name"
-                style="@style/InputItem"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/edit_constraint_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/cluster_name"
-                android:importantForAutofill="no"
-                android:inputType="text"
-                app:layout_constraintTop_toTopOf="parent"
-                android:text="@={clusterViewModel.cluster.clusterName}" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <EditText
-                android:id="@+id/cluster_address"
-                style="@style/InputItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/address_hint"
-                android:importantForAutofill="no"
-                android:inputType="textUri"
-                app:layout_constraintTop_toBottomOf="@+id/cluster_name"
-                android:text="@={clusterViewModel.cluster.clusterAddress}" />
+                <EditText
+                    android:id="@+id/cluster_name"
+                    style="@style/InputItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/cluster_name"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:text="@={ clusterViewModel.cluster.clusterName }"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <Spinner
-                android:id="@+id/cluster_authentication_method"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:selectedItemPosition="@{ clusterViewModel.authMethods.indexOf(clusterViewModel.cluster.clusterAuthenticationMethod) }"
-                android:onItemSelected="@{ () -> clusterViewModel.setAuthMethod(clusterAuthenticationMethod.getSelectedItemPosition()) }"
-                app:layout_constraintTop_toBottomOf="@+id/cluster_address" />
+                <EditText
+                    android:id="@+id/cluster_address"
+                    style="@style/InputItem"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/address_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textUri"
+                    android:text="@={ clusterViewModel.cluster.clusterAddress }"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_name"
+                    app:layout_constraintWidth_percent="0.7" />
 
-            <EditText
-                android:id="@+id/cluster_username"
-                style="@style/InputItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/username"
-                android:importantForAutofill="no"
-                android:inputType="text"
-                app:layout_constraintTop_toBottomOf="@+id/cluster_authentication_method"
-                android:text="@={clusterViewModel.cluster.clusterUsername}" />
+                <EditText
+                    android:id="@+id/cluster_port"
+                    style="@style/InputItem"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/port"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:text="@={ `` + clusterViewModel.cluster.clusterPort }"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cluster_address"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_name" />
 
-            <EditText
-                android:id="@+id/cluster_password"
-                style="@style/InputItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/password"
-                android:autofillHints="password"
-                android:inputType="textPassword"
-                app:layout_constraintTop_toBottomOf="@+id/cluster_username"
-                android:text="@={clusterViewModel.cluster.clusterPassword}" />
+                <Spinner
+                    android:id="@+id/cluster_authentication_method"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:contentDescription="@string/authentication_method"
+                    android:minHeight="48dp"
+                    android:onItemSelected="@{ () -> clusterViewModel.setAuthMethod(clusterAuthenticationMethod.getSelectedItemPosition()) }"
+                    android:selectedItemPosition="@{ clusterViewModel.authMethods.indexOf(clusterViewModel.cluster.clusterAuthenticationMethod) }"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_address"
+                    tools:layout_editor_absoluteX="8dp" />
 
+                <EditText
+                    android:id="@+id/cluster_username"
+                    style="@style/InputItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/username"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:visibility="@{ clusterViewModel.requestUsernamePassword ? View.VISIBLE : View.GONE}"
+                    android:text="@={ clusterViewModel.cluster.clusterUsername }"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_authentication_method"
+                    tools:ignore="DuplicateClickableBoundsCheck"
+                    tools:layout_editor_absoluteX="8dp" />
+
+                <EditText
+                    android:id="@+id/cluster_password"
+                    style="@style/InputItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="password"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:visibility="@{ clusterViewModel.requestUsernamePassword ? View.VISIBLE : View.GONE}"
+                    android:text="@={ clusterViewModel.cluster.clusterPassword }"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_username" />
+
+                <EditText
+                    android:id="@+id/cluster_bearer_token"
+                    style="@style/InputItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/bearer_token"
+                    android:inputType="text"
+                    android:importantForAutofill="no"
+                    android:visibility="@{ clusterViewModel.requestBearerToken ? View.VISIBLE : View.GONE}"
+                    android:text="@={ clusterViewModel.cluster.clusterBearerToken }"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_authentication_method" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <Button
                 android:id="@+id/add_cluster"
                 style="@style/Button"
@@ -79,9 +123,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/add_cluster"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cluster_password"
+                app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout"
                 android:visibility="@{ clusterViewModel.clusterId == -1 ? View.VISIBLE : View.GONE }"
-                android:onClick="@{ () -> clusterViewModel.addCluster(clusterName.getText().toString(), clusterAddress.getText().toString(), clusterAuthenticationMethod.getSelectedItemPosition(), clusterUsername.getText().toString(), clusterPassword.getText().toString()) }"/>
+                android:onClick="@{ () -> clusterViewModel.addCluster(clusterName.getText().toString(), clusterAddress.getText().toString(), clusterPort.getText().toString(), clusterAuthenticationMethod.getSelectedItemPosition(), clusterUsername.getText().toString(), clusterPassword.getText().toString(), clusterBearerToken.getText().toString())}"/>
 
             <Button
                 android:id="@+id/update_cluster"
@@ -90,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/update_cluster"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cluster_password"
+                app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout"
                 android:visibility="@{ clusterViewModel.clusterId != -1 ? View.VISIBLE : View.GONE }"
                 android:onClick="@{ () -> clusterViewModel.updateCluster() }"/>
 
@@ -101,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/test_connection"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cluster_password" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout" />
 
             <Button
                 android:id="@+id/delete_cluster"

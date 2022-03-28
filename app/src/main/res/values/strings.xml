@@ -12,9 +12,11 @@
     <string name="password">Password</string>
     <string name="test_connection">Test Connection</string>
     <string name="update_cluster">Update Cluster</string>
+    <string name="delete_cluster">Delete Cluster</string>
 
 
     <string-array name="auth_methods">
         <item>Basic Auth</item>
+        <item>Bearer Token</item>
     </string-array>
 </resources>

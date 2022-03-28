@@ -7,18 +7,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class ClusterViewModel(val dao: ClusterDAO, val clusterId: Long) : ViewModel()  {
+class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val authMethods: List<String>) : ViewModel()  {
     val cluster : LiveData<Cluster> = dao.getCluster(clusterId)
     private val _navigateToClusterList = MutableLiveData<Boolean>(false)
     val navigateToClusterList: LiveData<Boolean>
         get() = _navigateToClusterList
 
-    fun addCluster(clusterName: String, clusterAddress: String, clusterUsername: String, clusterPassword: String) {
-        Log.i("Fruta", "$clusterName $clusterAddress $clusterUsername $clusterPassword")
+    fun addCluster(clusterName: String, clusterAddress: String, clusterAuthMethodIndex: Int, clusterUsername: String, clusterPassword: String) {
         viewModelScope.launch {
             val newCluster = Cluster(
                 clusterName = clusterName,
                 clusterAddress = clusterAddress,
+                clusterAuthenticationMethod = authMethods[clusterAuthMethodIndex],
                 clusterUsername = clusterUsername,
                 clusterPassword = clusterPassword
             )
@@ -43,5 +43,12 @@ class ClusterViewModel(val dao: ClusterDAO, val clusterId: Long) : ViewModel()  
 
     fun onNavigatedToClusterList(){
         _navigateToClusterList.value = false
+    }
+
+    fun setAuthMethod(authMethodPosition: Int){
+        Log.i("Set Auth", "Cluster Value: ${cluster.value}\nAuth Method Index: ${authMethodPosition}")
+        if(cluster.value != null){
+            cluster.value!!.clusterAuthenticationMethod = authMethods[authMethodPosition]
+        }
     }
 }

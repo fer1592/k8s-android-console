@@ -44,9 +44,10 @@
 
             <Spinner
                 android:id="@+id/cluster_authentication_method"
-                style="@style/InputItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:selectedItemPosition="@{ clusterViewModel.authMethods.indexOf(clusterViewModel.cluster.clusterAuthenticationMethod) }"
+                android:onItemSelected="@{ () -> clusterViewModel.setAuthMethod(clusterAuthenticationMethod.getSelectedItemPosition()) }"
                 app:layout_constraintTop_toBottomOf="@+id/cluster_address" />
 
             <EditText
@@ -80,7 +81,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cluster_password"
                 android:visibility="@{ clusterViewModel.clusterId == -1 ? View.VISIBLE : View.GONE }"
-                android:onClick="@{ () -> clusterViewModel.addCluster(clusterName.getText().toString(), clusterAddress.getText().toString(), clusterUsername.getText().toString(), clusterPassword.getText().toString()) }"/>
+                android:onClick="@{ () -> clusterViewModel.addCluster(clusterName.getText().toString(), clusterAddress.getText().toString(), clusterAuthenticationMethod.getSelectedItemPosition(), clusterUsername.getText().toString(), clusterPassword.getText().toString()) }"/>
 
             <Button
                 android:id="@+id/update_cluster"
@@ -101,6 +102,17 @@
                 android:text="@string/test_connection"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cluster_password" />
+
+            <Button
+                android:id="@+id/delete_cluster"
+                style="@style/Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{ () -> clusterViewModel.deleteCluster() }"
+                android:text="@string/delete_cluster"
+                app:layout_constraintTop_toBottomOf="@+id/test_connection"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

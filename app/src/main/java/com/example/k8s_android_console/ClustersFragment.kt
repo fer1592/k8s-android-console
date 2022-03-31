@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -22,6 +23,8 @@ class ClustersFragment : Fragment() {
         // Get the data binding and view
         _binding = FragmentClustersBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.clusters)
 
         // Builds the database if it doesn't exists
         val application = requireNotNull(this.activity).application

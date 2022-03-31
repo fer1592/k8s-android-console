@@ -11,12 +11,17 @@
     <string name="authentication_method">Authentication Method</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="test_connection">Test Connection</string>
+    <string name="test_connection">Test Auth</string>
     <string name="update_cluster">Update Cluster</string>
     <string name="delete_cluster">Delete Cluster</string>
     <string name="port">Port</string>
     <string name="bearer_token">Bearer Token</string>
-
+    <string name="validation_empty_cluster_name">Please enter a Cluster Name</string>
+    <string name="validation_invalid_cluster_address">Please enter a Valid Cluster Address (IP/DNS record without https)</string>
+    <string name="validation_invalid_port_address">Please enter a Valid Port (between 1 and 49151)</string>
+    <string name="validation_empty_cluster_username">Please enter a Username</string>
+    <string name="validation_empty_cluster_password">Please enter a Password</string>
+    <string name="validation_empty_cluster_bearer_token">Please enter a Bearer Token</string>
 
     <string-array name="auth_methods">
         <item>Basic Auth</item>

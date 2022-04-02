@@ -1,9 +1,8 @@
-package com.example.k8s_android_console.ui.viewmodel
+package com.example.k8s_android_console
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.k8s_android_console.data.database.dao.ClusterDAO
 
 class ClustersViewModel(val dao: ClusterDAO) : ViewModel() {
     val clusters = dao.getAllClusters()

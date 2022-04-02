@@ -1,4 +1,4 @@
-package com.example.k8s_android_console.ui.view
+package com.example.k8s_android_console
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,7 +7,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-import com.example.k8s_android_console.R
 import com.example.k8s_android_console.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -15,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        _binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
 
         //We add the basic app bar functionality to the toolbar
         setSupportActionBar(binding.toolbar)

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="cluster"
-            type="com.example.k8s_android_console.data.database.entities.ClusterEntity" />
+            type="com.example.k8s_android_console.Cluster" />
     </data>
 
     <androidx.cardview.widget.CardView

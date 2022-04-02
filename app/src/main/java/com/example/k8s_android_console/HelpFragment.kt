@@ -1,11 +1,10 @@
-package com.example.k8s_android_console.ui.view
+package com.example.k8s_android_console
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.k8s_android_console.R
 
 class HelpFragment : Fragment() {
      override fun onCreateView(

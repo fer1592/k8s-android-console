@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.view.SetClusterFragment" >
+    tools:context=".SetClusterFragment" >
 
     <data>
         <import type="android.view.View"/>
         <variable
             name="clusterViewModel"
-            type="com.example.k8s_android_console.ui.viewmodel.ClusterViewModel" />
+            type="com.example.k8s_android_console.ClusterViewModel" />
     </data>
 
     <ScrollView

@@ -1,4 +1,4 @@
-package com.example.k8s_android_console.ui.view
+package com.example.k8s_android_console
 
 import android.os.Bundle
 import android.view.*
@@ -7,10 +7,6 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.example.k8s_android_console.ui.viewmodel.ClusterViewModel
-import com.example.k8s_android_console.ui.viewmodel.ClusterViewModelFactory
-import com.example.k8s_android_console.R
-import com.example.k8s_android_console.data.database.ClusterDatabase
 import com.example.k8s_android_console.databinding.FragmentSetClusterBinding
 
 class SetClusterFragment : Fragment() {
@@ -44,10 +40,7 @@ class SetClusterFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         // Set the spinner options and selected value
-        ArrayAdapter.createFromResource(application,
-            R.array.auth_methods,
-            R.layout.spinner_item
-        ).also { adapter ->
+        ArrayAdapter.createFromResource(application, R.array.auth_methods, R.layout.spinner_item).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.clusterAuthenticationMethod.adapter = adapter
         }

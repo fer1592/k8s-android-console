@@ -1,13 +1,12 @@
-package com.example.k8s_android_console.data.database
+package com.example.k8s_android_console
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.k8s_android_console.data.database.dao.ClusterDAO
-import com.example.k8s_android_console.data.database.entities.ClusterEntity
 
-@Database(entities = [ClusterEntity::class], version = 1, exportSchema = false)
+@Database(entities = [Cluster::class], version = 1, exportSchema = false)
 abstract class ClusterDatabase : RoomDatabase(){
     abstract val clusterDAO : ClusterDAO
 

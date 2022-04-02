@@ -1,4 +1,4 @@
-package com.example.k8s_android_console
+package com.example.k8s_android_console.ui.viewmodel
 
 import android.util.Base64
 import android.util.Log
@@ -6,12 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.k8s_android_console.data.database.dao.ClusterDAO
+import com.example.k8s_android_console.data.database.entities.ClusterEntity
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val authMethods: List<String>) : ViewModel()  {
     // Variable that holds the cluster in case of Edition
-    val cluster : LiveData<Cluster> = dao.getCluster(clusterId)
+    val cluster : LiveData<ClusterEntity> = dao.getCluster(clusterId)
 
     // Live data used to navigate once the cluster has been created/updated
     private val _navigateToClusterList = MutableLiveData(false)
@@ -63,7 +65,7 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
                    clusterClientKey: String, clusterBearerToken: String) {
         if(validateInput(clusterName, clusterAddress, clusterPort.toInt(), authMethods[clusterAuthMethodIndex], clusterClientCa, clusterClientKey, clusterBearerToken)) {
             viewModelScope.launch {
-                val newCluster = Cluster(
+                val newCluster = ClusterEntity(
                     clusterName = clusterName,
                     clusterAddress = clusterAddress,
                     clusterPort = clusterPort.toInt(),

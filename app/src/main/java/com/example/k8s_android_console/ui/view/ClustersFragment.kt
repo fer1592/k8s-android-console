@@ -1,4 +1,4 @@
-package com.example.k8s_android_console
+package com.example.k8s_android_console.ui.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.k8s_android_console.ui.viewmodel.ClustersViewModel
+import com.example.k8s_android_console.ui.viewmodel.ClustersViewModelFactory
+import com.example.k8s_android_console.R
+import com.example.k8s_android_console.data.database.ClusterDatabase
 import com.example.k8s_android_console.databinding.FragmentClustersBinding
 
 class ClustersFragment : Fragment() {

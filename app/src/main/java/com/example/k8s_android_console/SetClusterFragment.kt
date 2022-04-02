@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -83,6 +84,11 @@ class SetClusterFragment : Fragment() {
         clusterViewModel.clusterBearerTokenEmpty.observe(viewLifecycleOwner) { clusterBearerTokenEmpty ->
             if(clusterBearerTokenEmpty) binding.clusterBearerTokenInputLayout.error = getString(R.string.validation_empty_cluster_bearer_token)
             else binding.clusterBearerTokenInputLayout.error = null
+        }
+
+        clusterViewModel.connectionTestSuccessful.observe(viewLifecycleOwner) { connectionTestSuccessful ->
+            if(connectionTestSuccessful) Toast.makeText(context,R.string.connection_succeeded,Toast.LENGTH_SHORT).show()
+            else Toast.makeText(context,R.string.connection_failed,Toast.LENGTH_SHORT).show()
         }
 
         return view

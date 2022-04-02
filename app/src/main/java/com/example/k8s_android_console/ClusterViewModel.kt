@@ -6,7 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
 class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val authMethods: List<String>) : ViewModel()  {
@@ -57,6 +61,11 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
     private val _clusterBearerTokenEmpty = MutableLiveData(false)
     val clusterBearerTokenEmpty: LiveData<Boolean>
         get() = _clusterBearerTokenEmpty
+
+    // Live data to show if connection test was successful
+    private val _connectionTestSuccessful = MutableLiveData(false)
+    val connectionTestSuccessful: LiveData<Boolean>
+        get() = _connectionTestSuccessful
 
     // Function that creates a new cluster
     fun addCluster(clusterName: String, clusterAddress: String, clusterPort: String, clusterAuthMethodIndex: Int, clusterClientCa: String,
@@ -129,7 +138,7 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
         } else _clusterNameEmpty.value = false
 
         // Validate Cluster Address
-        val addressRegex = "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$)|(^[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)$)".toRegex()
+        val addressRegex = "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$)|(^[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b\$)".toRegex()
         if (!addressRegex.matches(clusterAddress)){
             valid = false
             _clusterAddressInvalid.value = true
@@ -179,5 +188,20 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
         }
 
         return valid
+    }
+
+    fun testConnection(clusterAddress: String, clusterPort: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val call = getRetrofit(clusterAddress, clusterPort).create(APIService::class.java).testKubernetesApi("api")
+                _connectionTestSuccessful.value = call.isSuccessful
+            } catch (e: Exception){
+                _connectionTestSuccessful.value = false
+            }
+        }
+    }
+
+    private fun getRetrofit(clusterAddress: String, clusterPort: String) : Retrofit {
+        return Retrofit.Builder().baseUrl("https://$clusterAddress:$clusterPort/").addConverterFactory(GsonConverterFactory.create()).build()
     }
 }

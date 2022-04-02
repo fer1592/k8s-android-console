@@ -190,7 +190,8 @@
                 android:text="@string/test_connection"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout"
+                android:onClick="@{ () -> clusterViewModel.testConnection(clusterAddress.getText().toString(), clusterPort.getText().toString()) }" />
 
             <Button
                 android:id="@+id/delete_cluster"

@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,7 +18,7 @@ class ClustersFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Get the data binding and view
         _binding = FragmentClustersBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -32,7 +31,7 @@ class ClustersFragment : Fragment() {
 
         // Gets the Clusters View Model
         val clusterViewModelFactory = ClustersViewModelFactory(dao)
-        val clustersViewModel = ViewModelProvider(this, clusterViewModelFactory).get(ClustersViewModel::class.java)
+        val clustersViewModel = ViewModelProvider(this, clusterViewModelFactory)[ClustersViewModel::class.java]
 
         // Sets the cluster View Model variable in the layout
         binding.clustersViewModel = clustersViewModel
@@ -62,7 +61,7 @@ class ClustersFragment : Fragment() {
             }
         })
 
-        // Set onclicklistener for the FAB to add a new cluster
+        // Set on click listener for the FAB to add a new cluster
         binding.addCluster.setOnClickListener{
             val action = ClustersFragmentDirections.actionClustersFragmentToSetClusterFragment(-1)
             this.findNavController().navigate(action)

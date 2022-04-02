@@ -1,10 +1,13 @@
 package com.example.k8s_android_console
 
+import android.util.Base64
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val authMethods: List<String>) : ViewModel()  {
     // Variable that holds the cluster in case of Edition
@@ -15,10 +18,10 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
     val navigateToClusterList: LiveData<Boolean>
         get() = _navigateToClusterList
 
-    // Live data that Indicates if the user/password fields should be displayed
-    private val _requestUsernamePassword = MutableLiveData(true)
-    val requestUsernamePassword: LiveData<Boolean>
-        get() = _requestUsernamePassword
+    // Live data that Indicates if the Client Cert fields should be displayed
+    private val _requestClusterClient = MutableLiveData(true)
+    val requestClusterClient: LiveData<Boolean>
+        get() = _requestClusterClient
 
     // Live data that Indicates if the Bearer token field should be displayed
     private val _requestBearerToken = MutableLiveData(false)
@@ -40,41 +43,33 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
     val clusterPortInvalid: LiveData<Boolean>
         get() = _clusterPortInvalid
 
-    // Live data to indicate if the username is not empty
-    private val _clusterUsernameEmpty = MutableLiveData(false)
-    val clusterUsernameEmpty: LiveData<Boolean>
-        get() = _clusterUsernameEmpty
+    // Live data to indicate if the Client Ca is not empty
+    private val _clusterClientCaInvalid = MutableLiveData(false)
+    val clusterClientCaInvalid: LiveData<Boolean>
+        get() = _clusterClientCaInvalid
 
-    // Live data to indicate if the password is not empty
-    private val _clusterPasswordEmpty = MutableLiveData(false)
-    val clusterPasswordEmpty: LiveData<Boolean>
-        get() = _clusterPasswordEmpty
+    // Live data to indicate if the Client Key is not empty
+    private val _clusterClientKeyInvalid = MutableLiveData(false)
+    val clusterClientKeyInvalid: LiveData<Boolean>
+        get() = _clusterClientKeyInvalid
 
     // Live data to indicate if the bearer token is not empty
     private val _clusterBearerTokenEmpty = MutableLiveData(false)
     val clusterBearerTokenEmpty: LiveData<Boolean>
         get() = _clusterBearerTokenEmpty
 
-    //private val _clusterValidations = MutableLiveData(mutableMapOf(
-    //     "clusterAddressFormat" to false,
-    //    "clusterPortEmpty" to false, "clusterPortMinMax" to false, "clusterUsernameEmpty" to false, "clusterUsernameLength" to false,
-    //    "clusterPasswordEmpty" to false, "clusterPasswordLength" to false, "clusterBearerTokenEmpty" to false, "clusterBearerTokenLength" to false,)
-    //)
-    //val clusterValidations: LiveData<MutableMap<String, Boolean>>
-    //    get() = _clusterValidations
-
     // Function that creates a new cluster
-    fun addCluster(clusterName: String, clusterAddress: String, clusterPort: String, clusterAuthMethodIndex: Int, clusterUsername: String,
-                   clusterPassword: String, clusterBearerToken: String) {
-        if(validateInput(clusterName, clusterAddress, clusterPort.toInt(), authMethods[clusterAuthMethodIndex], clusterUsername, clusterPassword, clusterBearerToken)) {
+    fun addCluster(clusterName: String, clusterAddress: String, clusterPort: String, clusterAuthMethodIndex: Int, clusterClientCa: String,
+                   clusterClientKey: String, clusterBearerToken: String) {
+        if(validateInput(clusterName, clusterAddress, clusterPort.toInt(), authMethods[clusterAuthMethodIndex], clusterClientCa, clusterClientKey, clusterBearerToken)) {
             viewModelScope.launch {
                 val newCluster = Cluster(
                     clusterName = clusterName,
                     clusterAddress = clusterAddress,
                     clusterPort = clusterPort.toInt(),
                     clusterAuthenticationMethod = authMethods[clusterAuthMethodIndex],
-                    clusterUsername = clusterUsername,
-                    clusterPassword = clusterPassword,
+                    clusterClientCa = clusterClientCa,
+                    clusterClientKey = clusterClientKey,
                     clusterBearerToken = clusterBearerToken
                 )
                 dao.insert(newCluster)
@@ -85,7 +80,7 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
 
     // Function that updates an existing cluster
     fun updateCluster(){
-        if(validateInput(cluster.value!!.clusterName, cluster.value!!.clusterAddress, cluster.value!!.clusterPort, cluster.value!!.clusterAuthenticationMethod, cluster.value!!.clusterUsername, cluster.value!!.clusterPassword, cluster.value!!.clusterBearerToken)){
+        if(validateInput(cluster.value!!.clusterName, cluster.value!!.clusterAddress, cluster.value!!.clusterPort, cluster.value!!.clusterAuthenticationMethod, cluster.value!!.clusterClientCa, cluster.value!!.clusterClientKey, cluster.value!!.clusterBearerToken)){
             viewModelScope.launch {
                 dao.update(cluster.value!!)
                 _navigateToClusterList.value = true
@@ -110,11 +105,11 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
     fun setAuthMethod(authMethodPosition: Int){
         when(authMethodPosition){
             0 -> {
-                _requestUsernamePassword.value = true
+                _requestClusterClient.value = true
                 _requestBearerToken.value = false
             }
             1 -> {
-                _requestUsernamePassword.value = false
+                _requestClusterClient.value = false
                 _requestBearerToken.value = true
             }
         }
@@ -124,7 +119,7 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
     }
 
     // Function that validates if the cluster can be updated
-    private fun validateInput(clusterName: String, clusterAddress: String, clusterPort: Int, clusterAuthMethod: String, clusterUsername: String, clusterPassword: String, clusterBearerToken: String) : Boolean{
+    private fun validateInput(clusterName: String, clusterAddress: String, clusterPort: Int, clusterAuthMethod: String, clusterClientCa: String, clusterClientKey: String, clusterBearerToken: String) : Boolean{
         var valid = true
 
         // Validate Cluster Name
@@ -148,20 +143,34 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
 
         // Validate Auth Methods
         when(clusterAuthMethod){
-            "Basic Auth" -> {
+            "Client Cert Auth" -> {
                 _clusterBearerTokenEmpty.value = false
-                if(clusterUsername.isEmpty()){
-                    valid = false
-                    _clusterUsernameEmpty.value = true
-                } else _clusterUsernameEmpty.value = false
-                if(clusterPassword.isEmpty()){
-                    valid = false
-                    _clusterPasswordEmpty.value = true
-                } else _clusterPasswordEmpty.value = false
+                val certRegex = "(?m)^-{3,}BEGIN CERTIFICATE-{3,}.*?-{3,}END CERTIFICATE-{3,}\$".toRegex()
+                try {
+                    val clientCaDecoded = String(Base64.decode(clusterClientCa, Base64.NO_WRAP), Charsets.UTF_8).replace("\n","")
+                    if (!certRegex.matches(clientCaDecoded)) {
+                        valid = false
+                        _clusterClientCaInvalid.value = true
+                    } else _clusterClientCaInvalid.value = false
+                } catch (e: Exception) {
+                    _clusterClientCaInvalid.value = true
+                }
+
+                val keyRegex = "(?m)^-{3,}BEGIN RSA PRIVATE KEY-{3,}.*?-{3,}END RSA PRIVATE KEY-{3,}\$".toRegex()
+                try {
+                    val clientKeyDecoded = String(Base64.decode(clusterClientKey, Base64.DEFAULT), Charsets.UTF_8).replace("\n","")
+                    Log.i("Client Key","$clusterClientKey\n$clientKeyDecoded")
+                    if(!keyRegex.matches(clientKeyDecoded)){
+                        valid = false
+                        _clusterClientKeyInvalid.value = true
+                    } else _clusterClientKeyInvalid.value = false
+                } catch (e: Exception) {
+                    _clusterClientKeyInvalid.value = true
+                }
             }
             "Bearer Token" -> {
-                _clusterUsernameEmpty.value = false
-                _clusterPasswordEmpty.value = false
+                _clusterClientCaInvalid.value = false
+                _clusterClientKeyInvalid.value = false
                 if(clusterBearerToken.isEmpty()){
                     valid = false
                     _clusterBearerTokenEmpty.value = true

@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.k8s_android_console.databinding.FragmentSetClusterBinding
 
-
 class SetClusterFragment : Fragment() {
     private var _binding : FragmentSetClusterBinding? = null
     private val binding get() = _binding!!
@@ -71,14 +70,14 @@ class SetClusterFragment : Fragment() {
             else binding.clusterPortInputLayout.error = null
         }
 
-        clusterViewModel.clusterUsernameEmpty.observe(viewLifecycleOwner) { clusterUsernameEmpty ->
-            if(clusterUsernameEmpty) binding.clusterUsernameInputLayout.error = getString(R.string.validation_empty_cluster_username)
-            else binding.clusterUsernameInputLayout.error = null
+        clusterViewModel.clusterClientCaInvalid.observe(viewLifecycleOwner) { clusterClientCaInvalid ->
+            if(clusterClientCaInvalid) binding.clusterClientCaInputLayout.error = getString(R.string.validation_valid_cluster_client_ca)
+            else binding.clusterClientCaInputLayout.error = null
         }
 
-        clusterViewModel.clusterPasswordEmpty.observe(viewLifecycleOwner) { clusterPasswordEmpty ->
-            if(clusterPasswordEmpty) binding.clusterPasswordInputLayout.error = getString(R.string.validation_empty_cluster_password)
-            else binding.clusterPasswordInputLayout.error = null
+        clusterViewModel.clusterClientKeyInvalid.observe(viewLifecycleOwner) { clusterClientKeyInvalid ->
+            if(clusterClientKeyInvalid) binding.clusterClientKeyInputLayout.error = getString(R.string.validation_valid_cluster_client_key)
+            else binding.clusterClientKeyInputLayout.error = null
         }
 
         clusterViewModel.clusterBearerTokenEmpty.observe(viewLifecycleOwner) { clusterBearerTokenEmpty ->

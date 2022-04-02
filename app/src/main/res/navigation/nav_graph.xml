@@ -30,6 +30,8 @@
             android:defaultValue="-1L" />
         <action
             android:id="@+id/action_setClusterFragment_to_clustersFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/clustersFragment"
             app:destination="@id/clustersFragment" />
     </fragment>
 </navigation>

@@ -100,41 +100,41 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/cluster_username_input_layout"
+                    android:id="@+id/cluster_client_ca_input_layout"
                     style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="@{ clusterViewModel.requestUsernamePassword ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{ clusterViewModel.requestClusterClient ? View.VISIBLE : View.GONE}"
                     app:layout_constraintTop_toBottomOf="@+id/cluster_authentication_method">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/cluster_username"
+                    android:id="@+id/cluster_client_ca"
                     style="@style/InputItem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/username"
+                    android:hint="@string/client_ca"
                     android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:text="@={ clusterViewModel.cluster.clusterUsername }"
+                    android:inputType="textMultiLine"
+                    android:text="@={ clusterViewModel.cluster.clusterClientCa }"
                     tools:ignore="DuplicateClickableBoundsCheck"
                     tools:layout_editor_absoluteX="8dp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/cluster_password_input_layout"
+                    android:id="@+id/cluster_client_key_input_layout"
                     style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="@{ clusterViewModel.requestUsernamePassword ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintTop_toBottomOf="@+id/cluster_username_input_layout" >
+                    android:visibility="@{ clusterViewModel.requestClusterClient ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_client_ca_input_layout" >
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/cluster_password"
+                        android:id="@+id/cluster_client_key"
                         style="@style/InputItem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:autofillHints="password"
-                        android:hint="@string/password"
-                        android:inputType="textPassword"
-                        android:text="@={ clusterViewModel.cluster.clusterPassword }" />
+                        android:importantForAutofill="no"
+                        android:hint="@string/client_key"
+                        android:inputType="textMultiLine"
+                        android:text="@={ clusterViewModel.cluster.clusterClientKey }" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -163,7 +163,7 @@
                 style="@style/Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="@{ () -> clusterViewModel.addCluster(clusterName.getText().toString(), clusterAddress.getText().toString(), clusterPort.getText().toString(), clusterAuthenticationMethod.getSelectedItemPosition(), clusterUsername.getText().toString(), clusterPassword.getText().toString(), clusterBearerToken.getText().toString())}"
+                android:onClick="@{ () -> clusterViewModel.addCluster(clusterName.getText().toString(), clusterAddress.getText().toString(), clusterPort.getText().toString(), clusterAuthenticationMethod.getSelectedItemPosition(), clusterClientCa.getText().toString(), clusterClientKey.getText().toString(), clusterBearerToken.getText().toString())}"
                 android:text="@string/add_cluster"
                 android:visibility="@{ clusterViewModel.clusterId == -1 ? View.VISIBLE : View.GONE }"
                 app:layout_constraintEnd_toEndOf="parent"

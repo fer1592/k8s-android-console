@@ -12,7 +12,7 @@ data class Cluster (
     var clusterAddress: String = "",
     var clusterPort: Int = 8443,
     var clusterAuthenticationMethod: String = "",
-    var clusterUsername: String = "",
-    var clusterPassword: String = "",
+    var clusterClientCa: String = "",
+    var clusterClientKey: String = "",
     var clusterBearerToken: String = ""
 )

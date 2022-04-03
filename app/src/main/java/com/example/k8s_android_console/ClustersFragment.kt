@@ -16,13 +16,12 @@ class ClustersFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Get the data binding and view
         _binding = FragmentClusterBinding.inflate(inflater, container, false)
-        val view = binding.root
 
         // Builds the database if it doesn't exists
-        val application = requireNotNull(this.activity).application
+        val application = requireActivity().application
         val dao = ClusterDatabase.getInstance(application).clusterDAO
 
         // Gets the Cluster View Model
@@ -38,13 +37,13 @@ class ClustersFragment : Fragment() {
         // Sets adapter for the cluster recycler view and observes for any changes in the clusters
         val clusterAdapter = ClusterItemAdapter()
         binding.clustersList.adapter = clusterAdapter
-        clustersViewModel.clusters.observe(viewLifecycleOwner, Observer {
+        clustersViewModel.clusters.observe(viewLifecycleOwner) {
             it?.let {
                 clusterAdapter.submitList(it)
             }
-        })
+        }
 
-        return  view
+        return binding.root
     }
 
     override fun onDestroyView() {

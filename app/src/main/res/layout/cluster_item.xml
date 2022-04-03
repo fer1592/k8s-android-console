@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="cluster"
@@ -27,7 +28,8 @@
                 app:layout_constraintWidth_percent="0.7"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="@{cluster.clusterName}"/>
+                android:text="@{cluster.clusterName}"
+                tools:text="Cluster name"/>
 
             <TextView
                 android:id="@+id/cluster_address"
@@ -40,7 +42,8 @@
                 app:layout_constraintWidth_percent="0.7"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="@{cluster.clusterAddress}" />
+                android:text="@{cluster.clusterAddress}"
+                tools:text="Address"/>
 
             <TextView
                 android:id="@+id/cluster_authentication_method"
@@ -52,7 +55,8 @@
                 app:layout_constraintTop_toTopOf="@+id/cluster_name"
                 android:textSize="14sp"
                 android:textAlignment="viewEnd"
-                android:text="@{cluster.clusterAuthenticationMethod}" />
+                android:text="@{cluster.clusterAuthenticationMethod}"
+                tools:text="Auth method"/>
 
             <TextView
                 android:id="@+id/cluster_status"
@@ -62,7 +66,8 @@
                 app:layout_constraintStart_toEndOf="@+id/cluster_address"
                 app:layout_constraintTop_toTopOf="@+id/cluster_address"
                 android:textSize="14sp"
-                android:textAlignment="viewEnd" />
+                android:textAlignment="viewEnd"
+                tools:text="Status"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.1828125" />
         <entry key="..\:/Users/fer05/Development/k8s-android-console/app/src/main/res/layout/fragment_set_cluster.xml" value="0.10989583333333333" />
         <entry key="..\:/Users/fer05/Development/k8s-android-console/app/src/main/res/layout/spinner_item.xml" value="0.10989583333333333" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.165" />

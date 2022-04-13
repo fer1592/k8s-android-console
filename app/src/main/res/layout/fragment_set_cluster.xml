@@ -191,7 +191,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout"
-                android:onClick="@{ () -> clusterViewModel.testConnection(clusterAddress.getText().toString(), clusterPort.getText().toString()) }" />
+                android:onClick="@{ () -> clusterViewModel.testConnection(clusterAddress.getText().toString(), clusterPort.getText().toString(), clusterAuthenticationMethod.getSelectedItemPosition(), clusterClientCa.getText().toString(), clusterClientKey.getText().toString(), clusterBearerToken.getText().toString()) }" />
 
             <Button
                 android:id="@+id/delete_cluster"

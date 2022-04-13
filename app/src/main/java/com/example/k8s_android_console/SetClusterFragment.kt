@@ -87,8 +87,10 @@ class SetClusterFragment : Fragment() {
         }
 
         clusterViewModel.connectionTestSuccessful.observe(viewLifecycleOwner) { connectionTestSuccessful ->
-            if(connectionTestSuccessful) Toast.makeText(context,R.string.connection_succeeded,Toast.LENGTH_SHORT).show()
-            else Toast.makeText(context,R.string.connection_failed,Toast.LENGTH_SHORT).show()
+            connectionTestSuccessful?.let {
+                if(it) Toast.makeText(context,R.string.connection_succeeded,Toast.LENGTH_SHORT).show()
+                else Toast.makeText(context,R.string.connection_failed,Toast.LENGTH_SHORT).show()
+            }
         }
 
         return view

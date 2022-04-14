@@ -10,7 +10,8 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        style="@style/ClusterCard" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -36,7 +37,7 @@
                 android:textAlignment="viewStart"
                 app:layout_constraintWidth_percent="0.7"
                 style="@style/RecyclerViewItemComplementary"
-                android:text="@{cluster.clusterAddress}" />
+                android:text="@{@string/https + cluster.clusterAddress + `:` + cluster.clusterPort + `/`}" />
 
             <TextView
                 android:id="@+id/cluster_authentication_method"
@@ -59,6 +60,34 @@
                 app:layout_constraintTop_toTopOf="@+id/cluster_address"
                 style="@style/RecyclerViewItemComplementary"
                 android:textAlignment="viewEnd" />
+
+            <TextView
+                android:id="@+id/edit_cluster"
+                style="@style/textViewAsButton"
+                android:text="@string/edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/cluster_address"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="0.5" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="20dp"
+                android:background="@color/lightGray"
+                app:layout_constraintTop_toBottomOf="@id/cluster_address"
+                app:layout_constraintStart_toEndOf="@+id/edit_cluster"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/delete_cluster"
+                style="@style/textViewAsButton"
+                android:text="@string/delete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/cluster_status"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.5"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

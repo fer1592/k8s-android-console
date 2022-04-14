@@ -71,16 +71,6 @@ class SetClusterFragment : Fragment() {
             else binding.clusterPortInputLayout.error = null
         }
 
-        clusterViewModel.clusterClientCaInvalid.observe(viewLifecycleOwner) { clusterClientCaInvalid ->
-            if(clusterClientCaInvalid) binding.clusterClientCaInputLayout.error = getString(R.string.validation_valid_cluster_client_ca)
-            else binding.clusterClientCaInputLayout.error = null
-        }
-
-        clusterViewModel.clusterClientKeyInvalid.observe(viewLifecycleOwner) { clusterClientKeyInvalid ->
-            if(clusterClientKeyInvalid) binding.clusterClientKeyInputLayout.error = getString(R.string.validation_valid_cluster_client_key)
-            else binding.clusterClientKeyInputLayout.error = null
-        }
-
         clusterViewModel.clusterBearerTokenEmpty.observe(viewLifecycleOwner) { clusterBearerTokenEmpty ->
             if(clusterBearerTokenEmpty) binding.clusterBearerTokenInputLayout.error = getString(R.string.validation_empty_cluster_bearer_token)
             else binding.clusterBearerTokenInputLayout.error = null

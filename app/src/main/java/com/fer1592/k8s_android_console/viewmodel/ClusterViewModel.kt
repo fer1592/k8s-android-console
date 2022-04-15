@@ -1,10 +1,13 @@
-package com.example.k8s_android_console
+package com.fer1592.k8s_android_console.viewmodel
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fer1592.k8s_android_console.data.db.ClusterDAO
+import com.fer1592.k8s_android_console.data.model.Cluster
+import com.fer1592.k8s_android_console.data.net.APIService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -137,7 +140,8 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
                     "Bearer Token" -> {
                         try {
                             map["Authorization"] = "Bearer ${it.clusterBearerToken}"
-                            val call = getRetrofit(it.clusterAddress, it.clusterPort).create(APIService::class.java).testKubernetesApi(map)
+                            val call = getRetrofit(it.clusterAddress, it.clusterPort).create(
+                                APIService::class.java).testKubernetesApi(map)
                             _connectionTestSuccessful.postValue(call.isSuccessful)
                         } catch (e: Exception){
                             _connectionTestSuccessful.postValue(false)

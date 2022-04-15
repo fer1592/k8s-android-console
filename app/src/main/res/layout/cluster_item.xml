@@ -5,7 +5,7 @@
     <data>
         <variable
             name="cluster"
-            type="com.example.k8s_android_console.Cluster" />
+            type="com.fer1592.k8s_android_console.data.model.Cluster" />
     </data>
 
     <androidx.cardview.widget.CardView

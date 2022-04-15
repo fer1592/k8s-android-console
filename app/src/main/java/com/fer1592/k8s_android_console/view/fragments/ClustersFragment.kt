@@ -1,4 +1,4 @@
-package com.example.k8s_android_console
+package com.fer1592.k8s_android_console.view.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.k8s_android_console.databinding.FragmentClustersBinding
+import com.fer1592.k8s_android_console.view.adapters.ClusterItemAdapter
+import com.fer1592.k8s_android_console.R
+import com.fer1592.k8s_android_console.data.db.ClusterDatabase
+import com.fer1592.k8s_android_console.databinding.FragmentClustersBinding
+import com.fer1592.k8s_android_console.viewmodel.ClustersViewModel
+import com.fer1592.k8s_android_console.viewmodel.ClustersViewModelFactory
 
 class ClustersFragment : Fragment() {
     private var _binding : FragmentClustersBinding? = null

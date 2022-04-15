@@ -1,4 +1,4 @@
-package com.example.k8s_android_console
+package com.fer1592.k8s_android_console.view.fragments
 
 import android.os.Bundle
 import android.view.*
@@ -8,7 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.example.k8s_android_console.databinding.FragmentSetClusterBinding
+import com.fer1592.k8s_android_console.R
+import com.fer1592.k8s_android_console.data.db.ClusterDatabase
+import com.fer1592.k8s_android_console.databinding.FragmentSetClusterBinding
+import com.fer1592.k8s_android_console.viewmodel.ClusterViewModel
+import com.fer1592.k8s_android_console.viewmodel.ClusterViewModelFactory
 
 class SetClusterFragment : Fragment() {
     private var _binding : FragmentSetClusterBinding? = null
@@ -41,7 +45,10 @@ class SetClusterFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         // Set the spinner options and selected value
-        ArrayAdapter.createFromResource(application, R.array.auth_methods, R.layout.spinner_item).also { adapter ->
+        ArrayAdapter.createFromResource(application,
+            R.array.auth_methods,
+            R.layout.spinner_item
+        ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.clusterAuthenticationMethod.adapter = adapter
         }
@@ -78,8 +85,8 @@ class SetClusterFragment : Fragment() {
 
         clusterViewModel.connectionTestSuccessful.observe(viewLifecycleOwner) { connectionTestSuccessful ->
             connectionTestSuccessful?.let {
-                if(it) Toast.makeText(context,R.string.connection_succeeded,Toast.LENGTH_SHORT).show()
-                else Toast.makeText(context,R.string.connection_failed,Toast.LENGTH_SHORT).show()
+                if(it) Toast.makeText(context, R.string.connection_succeeded,Toast.LENGTH_SHORT).show()
+                else Toast.makeText(context, R.string.connection_failed,Toast.LENGTH_SHORT).show()
             }
         }
 

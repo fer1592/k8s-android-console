@@ -1,6 +1,5 @@
-package com.example.k8s_android_console
+package com.fer1592.k8s_android_console.data.model
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

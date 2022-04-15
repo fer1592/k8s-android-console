@@ -1,10 +1,12 @@
-package com.example.k8s_android_console
+package com.fer1592.k8s_android_console.view.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.k8s_android_console.databinding.ClusterItemBinding
+import com.fer1592.k8s_android_console.data.utility.ClusterDiffItemCallback
+import com.fer1592.k8s_android_console.data.model.Cluster
+import com.fer1592.k8s_android_console.databinding.ClusterItemBinding
 
 class ClusterItemAdapter(private val editClickListener: (clusterId: Long) -> Unit, private val deleteClickListener: (cluster: Cluster) -> Unit)
     : ListAdapter<Cluster, ClusterItemAdapter.ClusterItemViewHolder>(ClusterDiffItemCallback()) {
@@ -20,7 +22,7 @@ class ClusterItemAdapter(private val editClickListener: (clusterId: Long) -> Uni
     class ClusterItemViewHolder(private val binding: ClusterItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         companion object {
-            fun inflateFrom(parent: ViewGroup) : ClusterItemViewHolder{
+            fun inflateFrom(parent: ViewGroup) : ClusterItemViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ClusterItemBinding.inflate(layoutInflater, parent, false)
                 return ClusterItemViewHolder(binding)

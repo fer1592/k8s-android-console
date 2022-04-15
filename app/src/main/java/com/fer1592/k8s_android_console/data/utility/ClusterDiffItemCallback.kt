@@ -1,5 +1,6 @@
-package com.example.k8s_android_console
+package com.fer1592.k8s_android_console.data.utility
 import androidx.recyclerview.widget.DiffUtil
+import com.fer1592.k8s_android_console.data.model.Cluster
 
 class ClusterDiffItemCallback : DiffUtil.ItemCallback<Cluster>() {
     override fun areItemsTheSame(oldItem: Cluster, newItem: Cluster): Boolean {

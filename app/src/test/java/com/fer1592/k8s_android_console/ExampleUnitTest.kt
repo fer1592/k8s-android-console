@@ -1,4 +1,4 @@
-package com.example.k8s_android_console
+package com.fer1592.k8s_android_console
 
 import org.junit.Test
 

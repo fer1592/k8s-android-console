@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/clustersFragment"
-        android:name="com.example.k8s_android_console.ClustersFragment"
+        android:name="com.fer1592.k8s_android_console.view.fragments.ClustersFragment"
         android:label="fragment_cluster"
         tools:layout="@layout/fragment_clusters" >
         <action
@@ -16,12 +16,12 @@
     </fragment>
     <fragment
         android:id="@+id/helpFragment"
-        android:name="com.example.k8s_android_console.HelpFragment"
+        android:name="com.fer1592.k8s_android_console.view.fragments.HelpFragment"
         android:label="fragment_help"
         tools:layout="@layout/fragment_help" />
     <fragment
         android:id="@+id/setClusterFragment"
-        android:name="com.example.k8s_android_console.SetClusterFragment"
+        android:name="com.fer1592.k8s_android_console.view.fragments.SetClusterFragment"
         android:label="fragment_set_cluster"
         tools:layout="@layout/fragment_set_cluster" >
         <argument

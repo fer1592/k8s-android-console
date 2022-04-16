@@ -20,28 +20,22 @@ class ClusterRepositoryImplementation : ClusterRepository {
         else clusterDao.getCluster(clusterId)
     }
 
-    override fun addCluster(cluster: Cluster): Boolean {
+    override suspend fun addCluster(cluster: Cluster): Boolean {
         return if (cluster.isValid()){
-            thread {
-                clusterDao.insert(cluster)
-            }
+            clusterDao.insert(cluster)
             true
         } else false
     }
 
-    override fun updateCluster(cluster: Cluster): Boolean {
+    override suspend fun updateCluster(cluster: Cluster): Boolean {
         return if (cluster.isValid()){
-            thread {
-                clusterDao.update(cluster)
-            }
+            clusterDao.update(cluster)
             true
         } else false
     }
 
-    override fun deleteCluster(cluster: Cluster) {
-        thread {
-            clusterDao.delete(cluster)
-        }
+    override suspend fun deleteCluster(cluster: Cluster) {
+        clusterDao.delete(cluster)
     }
 
     override suspend fun testClusterConnection(cluster: Cluster): Boolean {

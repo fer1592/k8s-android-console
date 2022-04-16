@@ -36,22 +36,25 @@ class ClusterViewModel(val clusterId: Long, val authMethods: List<String>, priva
 
     // Function that creates a new cluster
     fun addCluster() {
-        cluster.value?.let {
-            if (clusterRepository.addCluster(it)) {
-                _isInputValid.value = true
-                _navigateToClusterList.value = true
+        CoroutineScope(Dispatchers.IO).launch {
+            cluster.value?.let {
+                if (clusterRepository.addCluster(it)) {
+                    _isInputValid.postValue(true)
+                    _navigateToClusterList.postValue(true)
+                } else _isInputValid.postValue(false)
             }
-            else _isInputValid.value = false
         }
     }
 
     // Function that updates an existing cluster
     fun updateCluster(){
-        cluster.value?.let {
-            if (clusterRepository.updateCluster(it)) {
-                _isInputValid.value = true
-                _navigateToClusterList.value = true
-            } else _isInputValid.value = false
+        CoroutineScope(Dispatchers.IO).launch {
+            cluster.value?.let {
+                if (clusterRepository.updateCluster(it)) {
+                    _isInputValid.postValue(true)
+                    _navigateToClusterList.postValue(true)
+                } else _isInputValid.postValue(false)
+            }
         }
     }
 

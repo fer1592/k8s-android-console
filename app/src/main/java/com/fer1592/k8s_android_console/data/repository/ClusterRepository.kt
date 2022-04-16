@@ -12,13 +12,13 @@ interface ClusterRepository {
     fun getCluster(clusterId: Long): LiveData<Cluster>
 
     // Function to add a new cluster
-    fun addCluster(cluster: Cluster): Boolean
+    suspend fun addCluster(cluster: Cluster): Boolean
 
     // Function to update a cluster
-    fun updateCluster(cluster: Cluster): Boolean
+    suspend fun updateCluster(cluster: Cluster): Boolean
 
     // Function to delete a cluster
-    fun deleteCluster(cluster: Cluster)
+    suspend fun deleteCluster(cluster: Cluster)
 
     // Function to test cluster connection
     suspend fun testClusterConnection(cluster: Cluster): Boolean

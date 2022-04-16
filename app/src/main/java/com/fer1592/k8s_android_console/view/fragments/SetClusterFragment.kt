@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.fer1592.k8s_android_console.R
-import com.fer1592.k8s_android_console.data.db.ClusterDatabase
 import com.fer1592.k8s_android_console.databinding.FragmentSetClusterBinding
 import com.fer1592.k8s_android_console.viewmodel.ClusterViewModel
 import com.fer1592.k8s_android_console.viewmodel.ClusterViewModelFactory
@@ -24,16 +23,14 @@ class SetClusterFragment : Fragment() {
         _binding = FragmentSetClusterBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // Get Room Database
         val application = requireNotNull(this.activity).application
-        val dao = ClusterDatabase.getInstance(application).clusterDAO
 
         // Get list of auth methods
         val authMethods = resources.getStringArray(R.array.auth_methods).toList()
 
         // We get the cluster id from the parameters and create the view model
         val clusterId = SetClusterFragmentArgs.fromBundle(requireArguments()).clusterId
-        val clusterViewModelFactory = ClusterViewModelFactory(dao, clusterId, authMethods)
+        val clusterViewModelFactory = ClusterViewModelFactory(clusterId, authMethods)
         val clusterViewModel = ViewModelProvider(this, clusterViewModelFactory)[ClusterViewModel::class.java]
 
         if(clusterId == (-1).toLong()) {
@@ -62,25 +59,25 @@ class SetClusterFragment : Fragment() {
             }
         }
 
-        // Sets observer that displays or hide error messages when input validation occurs
-        clusterViewModel.clusterNameEmpty.observe(viewLifecycleOwner) { clusterNameEmpty ->
-            if(clusterNameEmpty) binding.clusterNameInputLayout.error = getString(R.string.validation_empty_cluster_name)
-            else binding.clusterNameInputLayout.error = null
-        }
+        clusterViewModel.isInputValid.observe(viewLifecycleOwner) { isValid ->
+            if (isValid == true || isValid == null){
+                binding.clusterNameInputLayout.error = null
+                binding.clusterAddressInputLayout.error = null
+                binding.clusterPortInputLayout.error = null
+                binding.clusterBearerTokenInputLayout.error = null
+            } else {
+                if (clusterViewModel.cluster.value?.validName == true) binding.clusterNameInputLayout.error = null
+                else binding.clusterNameInputLayout.error = getString(R.string.validation_empty_cluster_name)
 
-        clusterViewModel.clusterAddressInvalid.observe(viewLifecycleOwner) { clusterAddressInvalid ->
-            if(clusterAddressInvalid) binding.clusterAddressInputLayout.error = getString(R.string.validation_invalid_cluster_address)
-            else binding.clusterAddressInputLayout.error = null
-        }
+                if (clusterViewModel.cluster.value?.validClusterAddress == true) binding.clusterAddressInputLayout.error = null
+                else binding.clusterAddressInputLayout.error = getString(R.string.validation_invalid_cluster_address)
 
-        clusterViewModel.clusterPortInvalid.observe(viewLifecycleOwner) { clusterPortInvalid ->
-            if(clusterPortInvalid) binding.clusterPortInputLayout.error = getString(R.string.validation_invalid_port_address)
-            else binding.clusterPortInputLayout.error = null
-        }
+                if (clusterViewModel.cluster.value?.validClusterPort == true) binding.clusterPortInputLayout.error = null
+                else binding.clusterPortInputLayout.error = getString(R.string.validation_invalid_port_address)
 
-        clusterViewModel.clusterBearerTokenEmpty.observe(viewLifecycleOwner) { clusterBearerTokenEmpty ->
-            if(clusterBearerTokenEmpty) binding.clusterBearerTokenInputLayout.error = getString(R.string.validation_empty_cluster_bearer_token)
-            else binding.clusterBearerTokenInputLayout.error = null
+                if (clusterViewModel.cluster.value?.validClusterBearerToken == true) binding.clusterBearerTokenInputLayout.error = null
+                else binding.clusterBearerTokenInputLayout.error = getString(R.string.validation_empty_cluster_bearer_token)
+            }
         }
 
         clusterViewModel.connectionTestSuccessful.observe(viewLifecycleOwner) { connectionTestSuccessful ->

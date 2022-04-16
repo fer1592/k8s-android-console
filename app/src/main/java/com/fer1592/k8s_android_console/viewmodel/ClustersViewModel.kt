@@ -3,13 +3,12 @@ package com.fer1592.k8s_android_console.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.fer1592.k8s_android_console.data.db.ClusterDAO
 import com.fer1592.k8s_android_console.data.model.Cluster
-import kotlinx.coroutines.launch
+import com.fer1592.k8s_android_console.data.repository.ClusterRepository
+import com.fer1592.k8s_android_console.data.repository_implementation.ClusterRepositoryImplementation
 
-class ClustersViewModel(val dao: ClusterDAO) : ViewModel() {
-    val clusters = dao.getAllClusters()
+class ClustersViewModel(private val clusterRepository: ClusterRepository = ClusterRepositoryImplementation()) : ViewModel() {
+    val clusters = clusterRepository.getAllClusters()
     private val _navigateToCluster = MutableLiveData<Long?>()
     val navigateToCluster: LiveData<Long?>
         get() = _navigateToCluster
@@ -24,8 +23,6 @@ class ClustersViewModel(val dao: ClusterDAO) : ViewModel() {
 
     // Function that deletes a cluster
     fun deleteCluster(cluster: Cluster){
-        viewModelScope.launch {
-            dao.delete(cluster)
-        }
+        clusterRepository.deleteCluster(cluster)
     }
 }

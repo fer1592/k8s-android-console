@@ -7,13 +7,13 @@ import com.fer1592.k8s_android_console.data.model.Cluster
 @Dao
 interface ClusterDAO {
     @Insert
-    suspend fun insert(cluster: Cluster)
+    fun insert(cluster: Cluster)
 
     @Update
-    suspend fun update(cluster: Cluster)
+    fun update(cluster: Cluster)
 
     @Delete
-    suspend fun delete(cluster: Cluster)
+    fun delete(cluster: Cluster)
 
     @Query("SELECT * FROM Cluster WHERE clusterId = :clusterId")
     fun getCluster(clusterId: Long): LiveData<Cluster>

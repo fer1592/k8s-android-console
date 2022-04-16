@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.fer1592.k8s_android_console.view.adapters.ClusterItemAdapter
 import com.fer1592.k8s_android_console.R
-import com.fer1592.k8s_android_console.data.db.ClusterDatabase
 import com.fer1592.k8s_android_console.databinding.FragmentClustersBinding
 import com.fer1592.k8s_android_console.viewmodel.ClustersViewModel
 import com.fer1592.k8s_android_console.viewmodel.ClustersViewModelFactory
@@ -30,12 +29,8 @@ class ClustersFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.clusters)
 
-        // Builds the database if it doesn't exists
-        val application = requireNotNull(this.activity).application
-        val dao = ClusterDatabase.getInstance(application).clusterDAO
-
         // Gets the Clusters View Model
-        val clusterViewModelFactory = ClustersViewModelFactory(dao)
+        val clusterViewModelFactory = ClustersViewModelFactory()
         val clustersViewModel = ViewModelProvider(this, clusterViewModelFactory)[ClustersViewModel::class.java]
 
         // Sets the cluster View Model variable in the layout

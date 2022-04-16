@@ -1,29 +1,18 @@
 package com.fer1592.k8s_android_console.viewmodel
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.fer1592.k8s_android_console.data.db.ClusterDAO
 import com.fer1592.k8s_android_console.data.model.Cluster
-import com.fer1592.k8s_android_console.data.net.APIService
+import com.fer1592.k8s_android_console.data.repository.ClusterRepository
+import com.fer1592.k8s_android_console.data.repository_implementation.ClusterRepositoryImplementation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.security.KeyStore
-import java.security.SecureRandom
-import java.security.cert.CertificateException
-import java.security.cert.X509Certificate
-import javax.net.ssl.*
 
-class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val authMethods: List<String>) : ViewModel()  {
+class ClusterViewModel(val clusterId: Long, val authMethods: List<String>, private val clusterRepository: ClusterRepository = ClusterRepositoryImplementation()) : ViewModel()  {
     // Variable that holds the cluster in case of Edition
-    var cluster : LiveData<Cluster> = if (clusterId == -1L) MutableLiveData(Cluster())
-    else dao.getCluster(clusterId)
+    var cluster : LiveData<Cluster> = clusterRepository.getCluster(clusterId)
 
     // Live data used to navigate once the cluster has been created/updated
     private val _navigateToClusterList = MutableLiveData(false)
@@ -35,48 +24,34 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
     val requestBearerToken: LiveData<Boolean>
         get() = _requestBearerToken
 
-    // Live data to indicate if the cluster name is empty
-    private val _clusterNameEmpty = MutableLiveData(false)
-    val clusterNameEmpty: LiveData<Boolean>
-        get() = _clusterNameEmpty
-
-    // Live data to indicate if the cluster address is valid
-    private val _clusterAddressInvalid = MutableLiveData(false)
-    val clusterAddressInvalid: LiveData<Boolean>
-        get() = _clusterAddressInvalid
-
-    // Live data to indicate if the port is valid
-    private val _clusterPortInvalid = MutableLiveData(false)
-    val clusterPortInvalid: LiveData<Boolean>
-        get() = _clusterPortInvalid
-
-    // Live data to indicate if the bearer token is not empty
-    private val _clusterBearerTokenEmpty = MutableLiveData(false)
-    val clusterBearerTokenEmpty: LiveData<Boolean>
-        get() = _clusterBearerTokenEmpty
-
     // Live data to show if connection test was successful
     private val _connectionTestSuccessful = MutableLiveData<Boolean?>(null)
     val connectionTestSuccessful: LiveData<Boolean?>
         get() = _connectionTestSuccessful
 
+    // Live data to show input data errors
+    private val _isInputValid = MutableLiveData<Boolean?>(null)
+    val isInputValid: LiveData<Boolean?>
+        get() = _isInputValid
+
     // Function that creates a new cluster
     fun addCluster() {
-        if(validateInput()) {
-            viewModelScope.launch {
-                dao.insert(cluster.value!!)
+        cluster.value?.let {
+            if (clusterRepository.addCluster(it)) {
+                _isInputValid.value = true
                 _navigateToClusterList.value = true
             }
+            else _isInputValid.value = false
         }
     }
 
     // Function that updates an existing cluster
     fun updateCluster(){
-        if(validateInput()){
-            viewModelScope.launch {
-                dao.update(cluster.value!!)
+        cluster.value?.let {
+            if (clusterRepository.updateCluster(it)) {
+                _isInputValid.value = true
                 _navigateToClusterList.value = true
-            }
+            } else _isInputValid.value = false
         }
     }
 
@@ -97,120 +72,11 @@ class ClusterViewModel(private val dao: ClusterDAO, val clusterId: Long, val aut
         }
     }
 
-    // Function that validates if the cluster can be updated
-    private fun validateInput() : Boolean{
-        var valid = true
-        cluster.value?.let {
-            if (it.clusterName.isEmpty()) {
-                valid = false
-                _clusterNameEmpty.value = true
-            } else _clusterNameEmpty.value = false
-
-            // Validate Cluster Address
-            val addressRegex = "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$)|(^[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b\$)".toRegex()
-            if (!addressRegex.matches(it.clusterAddress)){
-                valid = false
-                _clusterAddressInvalid.value = true
-            } else _clusterAddressInvalid.value = false
-
-            // Validate Cluster Port
-            if(it.clusterPort !in 1..49151) {
-                valid = false
-                _clusterPortInvalid.value = true
-            } else _clusterPortInvalid.value = false
-
-            // Validate Auth Methods
-            when(it.clusterAuthenticationMethod){
-                "Bearer Token" -> {
-                    if(it.clusterBearerToken.isEmpty()){
-                        valid = false
-                        _clusterBearerTokenEmpty.value = true
-                    } else _clusterBearerTokenEmpty.value = false
-                }
-            }
-        }
-        return valid
-    }
-
-    fun testConnection(){
+    fun testConnection() {
         CoroutineScope(Dispatchers.IO).launch {
             cluster.value?.let {
-                val map = HashMap<String, String>()
-                when(it.clusterAuthenticationMethod){
-                    "Bearer Token" -> {
-                        try {
-                            map["Authorization"] = "Bearer ${it.clusterBearerToken}"
-                            val call = getRetrofit(it.clusterAddress, it.clusterPort).create(
-                                APIService::class.java).testKubernetesApi(map)
-                            _connectionTestSuccessful.postValue(call.isSuccessful)
-                        } catch (e: Exception){
-                            _connectionTestSuccessful.postValue(false)
-                        }
-                    }
-                }
+                _connectionTestSuccessful.postValue(clusterRepository.testClusterConnection(it))
             }
-        }
-    }
-
-    private fun getRetrofit(clusterAddress: String, clusterPort: Int) : Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://$clusterAddress:$clusterPort/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(getUnsafeOkHttpClient())
-            .build()
-    }
-
-    private fun getUnsafeOkHttpClient(): OkHttpClient {
-        return try {
-            // Create a trust manager that does not validate certificate chains
-            val trustAllCerts = arrayOf<TrustManager>(
-                @SuppressLint("CustomX509TrustManager")
-                object : X509TrustManager {
-                    @SuppressLint("TrustAllX509TrustManager")
-                    @Throws(CertificateException::class)
-                    override fun checkClientTrusted(
-                        chain: Array<X509Certificate?>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    @SuppressLint("TrustAllX509TrustManager")
-                    @Throws(CertificateException::class)
-                    override fun checkServerTrusted(
-                        chain: Array<X509Certificate?>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun getAcceptedIssuers(): Array<X509Certificate?> {
-                        return arrayOf()
-                    }
-                }
-            )
-
-            // Install the all-trusting trust manager
-            val sslContext = SSLContext.getInstance("SSL")
-            sslContext.init(null, trustAllCerts, SecureRandom())
-            // Create an ssl socket factory with our all-trusting manager
-            val sslSocketFactory = sslContext.socketFactory
-            val trustManagerFactory: TrustManagerFactory =
-                TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-            trustManagerFactory.init(null as KeyStore?)
-            val trustManagers: Array<TrustManager> =
-                trustManagerFactory.trustManagers
-            check(!(trustManagers.size != 1 || trustManagers[0] !is X509TrustManager)) {
-                "Unexpected default trust managers:" + trustManagers.contentToString()
-            }
-
-            val trustManager =
-                trustManagers[0] as X509TrustManager
-
-            val builder = OkHttpClient.Builder()
-            builder.sslSocketFactory(sslSocketFactory, trustManager)
-            builder.hostnameVerifier { _, _ -> true }
-            builder.build()
-        } catch (e: Exception) {
-            throw RuntimeException(e)
         }
     }
 }

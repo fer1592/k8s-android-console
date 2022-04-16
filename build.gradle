@@ -7,6 +7,9 @@ buildscript {
     ext.cardview_version = '1.0.0'
     ext.retrofit2_version = '2.9.0'
     ext.coroutines_version = '1.5.2'
+    ext.jupiter_version = '5.7.0'
+    ext.mockito_version = '4.0.0'
+    ext.archTestingVersion = '2.1.0'
 
     dependencies {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")

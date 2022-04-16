@@ -3,6 +3,7 @@ package com.fer1592.k8s_android_console.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.fer1592.k8s_android_console.data.model.Cluster
 import com.fer1592.k8s_android_console.data.repository.ClusterRepository
 import com.fer1592.k8s_android_console.data.repository_implementation.ClusterRepositoryImplementation
@@ -26,7 +27,7 @@ class ClustersViewModel(private val clusterRepository: ClusterRepository = Clust
 
     // Function that deletes a cluster
     fun deleteCluster(cluster: Cluster){
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             clusterRepository.deleteCluster(cluster)
         }
     }

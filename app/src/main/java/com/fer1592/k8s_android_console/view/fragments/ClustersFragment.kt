@@ -13,7 +13,6 @@ import com.fer1592.k8s_android_console.view.adapters.ClusterItemAdapter
 import com.fer1592.k8s_android_console.R
 import com.fer1592.k8s_android_console.databinding.FragmentClustersBinding
 import com.fer1592.k8s_android_console.viewmodel.ClustersViewModel
-import com.fer1592.k8s_android_console.viewmodel.ClustersViewModelFactory
 
 class ClustersFragment : Fragment() {
     private var _binding : FragmentClustersBinding? = null
@@ -30,8 +29,7 @@ class ClustersFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.clusters)
 
         // Gets the Clusters View Model
-        val clusterViewModelFactory = ClustersViewModelFactory()
-        val clustersViewModel = ViewModelProvider(this, clusterViewModelFactory)[ClustersViewModel::class.java]
+        val clustersViewModel = ViewModelProvider(this)[ClustersViewModel::class.java]
 
         // Sets the cluster View Model variable in the layout
         binding.clustersViewModel = clustersViewModel
@@ -42,7 +40,7 @@ class ClustersFragment : Fragment() {
         // Sets adapter for the cluster recycler view and observes for any changes in the clusters
         val clusterAdapter = ClusterItemAdapter(
             // Changes the navigateToCluster value, to indicate that we want to navigate to a specific cluster to edit it
-            { clusterId -> clustersViewModel.onClusterClicked(clusterId) },
+            { clusterId -> clustersViewModel.onClusterEditClicked(clusterId) },
             // Deletes the cluster
             { cluster ->
                 val dialog = AlertDialog.Builder(requireContext())
@@ -69,12 +67,12 @@ class ClustersFragment : Fragment() {
         }
 
         // Observe the navigateToCluster live data to navigate to the cluster when the value changes
-        clustersViewModel.navigateToCluster.observe(viewLifecycleOwner) { clusterId ->
+        clustersViewModel.navigateToEditCluster.observe(viewLifecycleOwner) { clusterId ->
             clusterId?.let {
                 val action =
                     ClustersFragmentDirections.actionClustersFragmentToSetClusterFragment(clusterId)
                 this.findNavController().navigate(action)
-                clustersViewModel.onClusterNavigated()
+                clustersViewModel.onClusterEditNavigated()
             }
         }
 

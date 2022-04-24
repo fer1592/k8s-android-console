@@ -13,7 +13,7 @@ interface ClusterDAO {
     suspend fun update(cluster: Cluster)
 
     @Delete
-    suspend fun delete(cluster: Cluster)
+    suspend fun delete(cluster: Cluster): Int
 
     @Query("SELECT * FROM Cluster WHERE clusterId = :clusterId")
     fun getCluster(clusterId: Long): LiveData<Cluster>

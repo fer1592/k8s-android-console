@@ -7,14 +7,19 @@ import androidx.lifecycle.viewModelScope
 import com.fer1592.k8s_android_console.data.model.Cluster
 import com.fer1592.k8s_android_console.data.repository.ClusterRepository
 import com.fer1592.k8s_android_console.data.repository_implementation.ClusterRepositoryImplementation
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ClusterViewModel(val clusterId: Long, val authMethods: List<String>, private val clusterRepository: ClusterRepository = ClusterRepositoryImplementation()) : ViewModel()  {
+class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel()  {
     // Variable that holds the cluster in case of Edition
-    var cluster : LiveData<Cluster> = clusterRepository.getCluster(clusterId)
+    var cluster : LiveData<Cluster>? = null
+    // Variable holding the clusterRepository
+    private var clusterRepository: ClusterRepository? = null
+    var authMethods : List<String>? = null
+    var clusterId: Long? = null
 
-    // Live data used to navigate once the cluster has been created/updated
+        // Live data used to navigate once the cluster has been created/updated
     private val _navigateToClusterList = MutableLiveData(false)
     val navigateToClusterList: LiveData<Boolean>
         get() = _navigateToClusterList
@@ -34,11 +39,19 @@ class ClusterViewModel(val clusterId: Long, val authMethods: List<String>, priva
     val isInputValid: LiveData<Boolean?>
         get() = _isInputValid
 
+    // Function that init the viewModel
+    fun getCluster(clusterId: Long, authMethods: List<String>, clusterRepository: ClusterRepository = ClusterRepositoryImplementation()){
+        this.clusterId = clusterId
+        this.clusterRepository = clusterRepository
+        this.cluster = clusterRepository.getCluster(clusterId)
+        this.authMethods = authMethods
+    }
+
     // Function that creates a new cluster
     fun addCluster() {
-        viewModelScope.launch(Dispatchers.IO) {
-            cluster.value?.let {
-                if (clusterRepository.addCluster(it)) {
+        viewModelScope.launch(dispatcher) {
+            cluster?.value?.let {
+                if (clusterRepository?.addCluster(it) == true) {
                     _isInputValid.postValue(true)
                     _navigateToClusterList.postValue(true)
                 } else _isInputValid.postValue(false)
@@ -48,9 +61,9 @@ class ClusterViewModel(val clusterId: Long, val authMethods: List<String>, priva
 
     // Function that updates an existing cluster
     fun updateCluster(){
-        viewModelScope.launch(Dispatchers.IO) {
-            cluster.value?.let {
-                if (clusterRepository.updateCluster(it)) {
+        viewModelScope.launch(dispatcher) {
+            cluster?.value?.let {
+                if (clusterRepository?.updateCluster(it) == true) {
                     _isInputValid.postValue(true)
                     _navigateToClusterList.postValue(true)
                 } else _isInputValid.postValue(false)
@@ -70,15 +83,15 @@ class ClusterViewModel(val clusterId: Long, val authMethods: List<String>, priva
                 _requestBearerToken.value = true
             }
         }
-        cluster.value?.let{
-            it.clusterAuthenticationMethod = authMethods[authMethodPosition]
+        cluster?.value?.let{
+            it.clusterAuthenticationMethod = authMethods?.get(authMethodPosition) ?: "Bearer Token"
         }
     }
 
     fun testConnection() {
-        viewModelScope.launch(Dispatchers.IO) {
-            cluster.value?.let {
-                _connectionTestSuccessful.postValue(clusterRepository.testClusterConnection(it))
+        viewModelScope.launch(dispatcher) {
+            cluster?.value?.let {
+                _connectionTestSuccessful.postValue(clusterRepository?.testClusterConnection(it))
             }
         }
     }

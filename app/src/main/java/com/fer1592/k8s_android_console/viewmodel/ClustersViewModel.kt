@@ -7,27 +7,27 @@ import androidx.lifecycle.viewModelScope
 import com.fer1592.k8s_android_console.data.model.Cluster
 import com.fer1592.k8s_android_console.data.repository.ClusterRepository
 import com.fer1592.k8s_android_console.data.repository_implementation.ClusterRepositoryImplementation
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ClustersViewModel(private val clusterRepository: ClusterRepository = ClusterRepositoryImplementation()) : ViewModel() {
+class ClustersViewModel(private val clusterRepository: ClusterRepository = ClusterRepositoryImplementation(), private val dispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     val clusters = clusterRepository.getAllClusters()
-    private val _navigateToCluster = MutableLiveData<Long?>()
-    val navigateToCluster: LiveData<Long?>
-        get() = _navigateToCluster
+    private val _navigateToEditCluster = MutableLiveData<Long?>()
+    val navigateToEditCluster: LiveData<Long?>
+        get() = _navigateToEditCluster
 
-    fun onClusterClicked(clusterId: Long){
-        _navigateToCluster.value = clusterId
+    fun onClusterEditClicked(clusterId: Long){
+        _navigateToEditCluster.value = clusterId
     }
 
-    fun onClusterNavigated() {
-        _navigateToCluster.value = null
+    fun onClusterEditNavigated() {
+        _navigateToEditCluster.value = null
     }
 
     // Function that deletes a cluster
     fun deleteCluster(cluster: Cluster){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             clusterRepository.deleteCluster(cluster)
         }
     }

@@ -18,7 +18,7 @@ interface ClusterRepository {
     suspend fun updateCluster(cluster: Cluster): Boolean
 
     // Function to delete a cluster
-    suspend fun deleteCluster(cluster: Cluster)
+    suspend fun deleteCluster(cluster: Cluster): Boolean
 
     // Function to test cluster connection
     suspend fun testClusterConnection(cluster: Cluster): Boolean

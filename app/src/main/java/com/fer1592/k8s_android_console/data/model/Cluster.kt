@@ -50,7 +50,8 @@ data class Cluster (
                 } else this.validClusterBearerToken = true
             }
             else -> {
-                this.validClusterBearerToken = true
+                valid = false
+                this.validClusterBearerToken = false
             }
         }
         return valid

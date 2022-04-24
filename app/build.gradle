@@ -67,7 +67,7 @@ dependencies {
     testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_version"
 
     // For runBlockingTest
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-RC"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1"
 
     // Architecture Component core testing library, used to import InstantTaskExecutorRule
     testImplementation "androidx.arch.core:core-testing:$archTestingVersion"

@@ -1,11 +1,13 @@
 package com.fer1592.k8s_android_console.view.fragments
 
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.fer1592.k8s_android_console.R
@@ -13,10 +15,11 @@ import com.fer1592.k8s_android_console.databinding.FragmentSetClusterBinding
 import com.fer1592.k8s_android_console.viewmodel.ClusterViewModel
 
 class SetClusterFragment : Fragment() {
-    private var _binding : FragmentSetClusterBinding? = null
+    private var _binding: FragmentSetClusterBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSetClusterBinding.inflate(inflater, container, false)
@@ -30,19 +33,18 @@ class SetClusterFragment : Fragment() {
         // We get the cluster id from the parameters and create the view model
         val clusterId = SetClusterFragmentArgs.fromBundle(requireArguments()).clusterId
         val clusterViewModel = ViewModelProvider(this)[ClusterViewModel::class.java]
-        clusterViewModel.getCluster(clusterId,authMethods)
+        clusterViewModel.getCluster(clusterId, authMethods)
 
-
-        if(clusterId == (-1).toLong()) {
+        if (clusterId == (-1).toLong()) {
             (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.add_cluster)
-        }
-        else (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.update_cluster)
+        } else (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.update_cluster)
 
         binding.clusterViewModel = clusterViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         // Set the spinner options and selected value
-        ArrayAdapter.createFromResource(application,
+        ArrayAdapter.createFromResource(
+            application,
             R.array.auth_methods,
             R.layout.spinner_item
         ).also { adapter ->
@@ -60,7 +62,7 @@ class SetClusterFragment : Fragment() {
         }
 
         clusterViewModel.isInputValid.observe(viewLifecycleOwner) { isValid ->
-            if (isValid == true || isValid == null){
+            if (isValid == true || isValid == null) {
                 binding.clusterNameInputLayout.error = null
                 binding.clusterAddressInputLayout.error = null
                 binding.clusterPortInputLayout.error = null
@@ -82,8 +84,8 @@ class SetClusterFragment : Fragment() {
 
         clusterViewModel.connectionTestSuccessful.observe(viewLifecycleOwner) { connectionTestSuccessful ->
             connectionTestSuccessful?.let {
-                if(it) Toast.makeText(context, R.string.connection_succeeded,Toast.LENGTH_SHORT).show()
-                else Toast.makeText(context, R.string.connection_failed,Toast.LENGTH_SHORT).show()
+                if (it) Toast.makeText(context, R.string.connection_succeeded, Toast.LENGTH_SHORT).show()
+                else Toast.makeText(context, R.string.connection_failed, Toast.LENGTH_SHORT).show()
             }
         }
 

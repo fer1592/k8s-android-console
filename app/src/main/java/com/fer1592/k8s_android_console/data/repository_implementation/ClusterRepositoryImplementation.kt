@@ -19,14 +19,14 @@ class ClusterRepositoryImplementation : ClusterRepository {
     }
 
     override suspend fun addCluster(cluster: Cluster): Boolean {
-        return if (cluster.isValid()){
+        return if (cluster.isValid()) {
             clusterDao.insert(cluster)
             true
         } else false
     }
 
     override suspend fun updateCluster(cluster: Cluster): Boolean {
-        return if (cluster.isValid()){
+        return if (cluster.isValid()) {
             clusterDao.update(cluster)
             true
         } else false
@@ -37,7 +37,7 @@ class ClusterRepositoryImplementation : ClusterRepository {
     }
 
     override suspend fun testClusterConnection(cluster: Cluster): Boolean {
-        return if(cluster.clusterAddress.isNotEmpty() and (cluster.clusterPort in 1..49151)) {
+        return if (cluster.clusterAddress.isNotEmpty() and (cluster.clusterPort in 1..49151)) {
             val retrofitClient = RetrofitClient(cluster.clusterAddress, cluster.clusterPort)
             val map = HashMap<String, String>()
 

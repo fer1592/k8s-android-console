@@ -9,17 +9,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.fer1592.k8s_android_console.view.adapters.ClusterItemAdapter
 import com.fer1592.k8s_android_console.R
 import com.fer1592.k8s_android_console.databinding.FragmentClustersBinding
+import com.fer1592.k8s_android_console.view.adapters.ClusterItemAdapter
 import com.fer1592.k8s_android_console.viewmodel.ClustersViewModel
 
 class ClustersFragment : Fragment() {
-    private var _binding : FragmentClustersBinding? = null
+    private var _binding: FragmentClustersBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Get the data binding and view
@@ -45,8 +46,8 @@ class ClustersFragment : Fragment() {
             { cluster ->
                 val dialog = AlertDialog.Builder(requireContext())
                     .setTitle(getString(R.string.delete_cluster))
-                    .setMessage(String.format(getString(R.string.cluster_delete_confirmation_question),cluster.clusterName))
-                    .setPositiveButton(getString(R.string.accept)){ view, _ ->
+                    .setMessage(String.format(getString(R.string.cluster_delete_confirmation_question), cluster.clusterName))
+                    .setPositiveButton(getString(R.string.accept)) { view, _ ->
                         clustersViewModel.deleteCluster(cluster)
                         view.dismiss()
                     }
@@ -77,7 +78,7 @@ class ClustersFragment : Fragment() {
         }
 
         // Set on click listener for the FAB to add a new cluster
-        binding.addCluster.setOnClickListener{
+        binding.addCluster.setOnClickListener {
             val action = ClustersFragmentDirections.actionClustersFragmentToSetClusterFragment(-1)
             this.findNavController().navigate(action)
         }

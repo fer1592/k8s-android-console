@@ -11,15 +11,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel()  {
+class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     // Variable that holds the cluster in case of Edition
-    var cluster : LiveData<Cluster>? = null
+    var cluster: LiveData<Cluster>? = null
     // Variable holding the clusterRepository
     private var clusterRepository: ClusterRepository? = null
-    var authMethods : List<String>? = null
+    var authMethods: List<String>? = null
     var clusterId: Long? = null
 
-        // Live data used to navigate once the cluster has been created/updated
+    // Live data used to navigate once the cluster has been created/updated
     private val _navigateToClusterList = MutableLiveData(false)
     val navigateToClusterList: LiveData<Boolean>
         get() = _navigateToClusterList
@@ -40,7 +40,7 @@ class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers
         get() = _isInputValid
 
     // Function that init the viewModel
-    fun getCluster(clusterId: Long, authMethods: List<String>, clusterRepository: ClusterRepository = ClusterRepositoryImplementation()){
+    fun getCluster(clusterId: Long, authMethods: List<String>, clusterRepository: ClusterRepository = ClusterRepositoryImplementation()) {
         this.clusterId = clusterId
         this.clusterRepository = clusterRepository
         this.cluster = clusterRepository.getCluster(clusterId)
@@ -60,7 +60,7 @@ class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers
     }
 
     // Function that updates an existing cluster
-    fun updateCluster(){
+    fun updateCluster() {
         viewModelScope.launch(dispatcher) {
             cluster?.value?.let {
                 if (clusterRepository?.updateCluster(it) == true) {
@@ -72,18 +72,18 @@ class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers
     }
 
     // Function that indicates that fragment needs to navigate back to main screen
-    fun onNavigatedToClusterList(){
+    fun onNavigatedToClusterList() {
         _navigateToClusterList.value = false
     }
 
     // Function that updates the authentication method based on the position received from the spinner
-    fun setAuthMethod(authMethodPosition: Int){
-        when(authMethodPosition){
+    fun setAuthMethod(authMethodPosition: Int) {
+        when (authMethodPosition) {
             0 -> {
                 _requestBearerToken.value = true
             }
         }
-        cluster?.value?.let{
+        cluster?.value?.let {
             it.clusterAuthenticationMethod = authMethods?.get(authMethodPosition) ?: "Bearer Token"
         }
     }

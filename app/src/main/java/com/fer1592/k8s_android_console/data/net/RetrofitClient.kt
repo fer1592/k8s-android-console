@@ -82,7 +82,7 @@ class RetrofitClient(clusterAddress: String, clusterPort: Int) {
         }
     }
 
-    fun testCluster(headers: Map<String, String>) : Call<ClusterResponse> {
+    fun testCluster(headers: Map<String, String>): Call<ClusterResponse> {
         return clusterApi.testClusterApi(headers)
     }
 }

@@ -5,7 +5,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Cluster")
-data class Cluster (
+data class Cluster(
     @PrimaryKey(autoGenerate = true)
     var clusterId: Long = 0L,
     var clusterName: String = "",
@@ -19,7 +19,7 @@ data class Cluster (
     @Ignore var validClusterBearerToken: Boolean = true
 ) {
     // Public method to return if the cluster is valid or not, and to set the flags indicating which values are not valid
-    fun isValid() : Boolean{
+    fun isValid(): Boolean {
         var valid = true
 
         // Validate cluster Name
@@ -30,21 +30,21 @@ data class Cluster (
 
         // Validate Cluster Address
         val addressRegex = "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$)|(^[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b\$)".toRegex()
-        if (!addressRegex.matches(this.clusterAddress)){
+        if (!addressRegex.matches(this.clusterAddress)) {
             valid = false
             this.validClusterAddress = false
         } else this.validClusterAddress = true
 
         // Validate Cluster Port
-        if(this.clusterPort !in 1..49151) {
+        if (this.clusterPort !in 1..49151) {
             valid = false
             this.validClusterPort = false
         } else this.validClusterPort = true
 
         // Validate Auth Methods
-        when(this.clusterAuthenticationMethod){
+        when (this.clusterAuthenticationMethod) {
             "Bearer Token" -> {
-                if(this.clusterBearerToken.isEmpty()){
+                if (this.clusterBearerToken.isEmpty()) {
                     valid = false
                     this.validClusterBearerToken = false
                 } else this.validClusterBearerToken = true

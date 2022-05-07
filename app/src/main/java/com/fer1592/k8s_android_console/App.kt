@@ -5,6 +5,7 @@ import com.fer1592.k8s_android_console.data.db.ClusterDatabase
 
 lateinit var db: ClusterDatabase
 
+@Suppress("unused")
 class App : Application() {
     companion object {
         lateinit var INSTANCE: App

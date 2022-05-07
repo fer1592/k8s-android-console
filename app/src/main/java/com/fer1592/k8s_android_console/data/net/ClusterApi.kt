@@ -7,5 +7,5 @@ import retrofit2.http.HeaderMap
 
 interface ClusterApi {
     @GET("/api")
-    fun testClusterApi(@HeaderMap headers: Map<String, String>) : Call<ClusterResponse>
+    fun testClusterApi(@HeaderMap headers: Map<String, String>): Call<ClusterResponse>
 }

@@ -4,15 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.fer1592.k8s_android_console.data.utility.ClusterDiffItemCallback
 import com.fer1592.k8s_android_console.data.model.Cluster
+import com.fer1592.k8s_android_console.data.utility.ClusterDiffItemCallback
 import com.fer1592.k8s_android_console.databinding.ClusterItemBinding
 
-class ClusterItemAdapter(private val editClickListener: (clusterId: Long) -> Unit, private val deleteClickListener: (cluster: Cluster) -> Unit)
-    : ListAdapter<Cluster, ClusterItemAdapter.ClusterItemViewHolder>(ClusterDiffItemCallback()) {
+class ClusterItemAdapter(private val editClickListener: (clusterId: Long) -> Unit, private val deleteClickListener: (cluster: Cluster) -> Unit) :
+    ListAdapter<Cluster, ClusterItemAdapter.ClusterItemViewHolder>(ClusterDiffItemCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup,viewType: Int)
-        : ClusterItemViewHolder = ClusterItemViewHolder.inflateFrom(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClusterItemViewHolder =
+        ClusterItemViewHolder.inflateFrom(parent)
 
     override fun onBindViewHolder(holder: ClusterItemViewHolder, position: Int) {
         val item = getItem(position)
@@ -22,7 +22,7 @@ class ClusterItemAdapter(private val editClickListener: (clusterId: Long) -> Uni
     class ClusterItemViewHolder(private val binding: ClusterItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         companion object {
-            fun inflateFrom(parent: ViewGroup) : ClusterItemViewHolder {
+            fun inflateFrom(parent: ViewGroup): ClusterItemViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ClusterItemBinding.inflate(layoutInflater, parent, false)
                 return ClusterItemViewHolder(binding)
@@ -31,11 +31,11 @@ class ClusterItemAdapter(private val editClickListener: (clusterId: Long) -> Uni
 
         fun bind(item: Cluster, editClickListener: (clusterId: Long) -> Unit, deleteClickListener: (cluster: Cluster) -> Unit) {
             binding.cluster = item
-            //Listener to edit the cluster
+            // Listener to edit the cluster
             binding.editCluster.setOnClickListener {
                 editClickListener(item.clusterId)
             }
-            //Listener to delete the cluster
+            // Listener to delete the cluster
             binding.deleteCluster.setOnClickListener {
                 deleteClickListener(item)
             }

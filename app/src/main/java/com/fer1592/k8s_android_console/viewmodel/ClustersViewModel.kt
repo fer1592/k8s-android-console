@@ -17,7 +17,7 @@ class ClustersViewModel(private val clusterRepository: ClusterRepository = Clust
     val navigateToEditCluster: LiveData<Long?>
         get() = _navigateToEditCluster
 
-    fun onClusterEditClicked(clusterId: Long){
+    fun onClusterEditClicked(clusterId: Long) {
         _navigateToEditCluster.value = clusterId
     }
 
@@ -26,7 +26,7 @@ class ClustersViewModel(private val clusterRepository: ClusterRepository = Clust
     }
 
     // Function that deletes a cluster
-    fun deleteCluster(cluster: Cluster){
+    fun deleteCluster(cluster: Cluster) {
         viewModelScope.launch(dispatcher) {
             clusterRepository.deleteCluster(cluster)
         }

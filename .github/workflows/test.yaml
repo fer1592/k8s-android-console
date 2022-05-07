@@ -11,9 +11,13 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+          cache: gradle
       
-      - name: Run Kotlin Linter
-        run: ./gradlew ktlintStagingDebugCheck
+      - name: ktlint
+        uses: ScaCap/action-ktlint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review # Change reporter
       
       - name: Run Unit Test
         run: ./gradlew testDebugUnitTest

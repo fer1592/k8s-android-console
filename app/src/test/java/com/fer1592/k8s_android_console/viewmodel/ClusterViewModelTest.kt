@@ -6,20 +6,24 @@ import com.fer1592.k8s_android_console.data.model.Cluster
 import com.fer1592.k8s_android_console.data.repository.ClusterRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class ClusterViewModelTest{
-    private lateinit var clusterViewModel : ClusterViewModel
+class ClusterViewModelTest {
+    private lateinit var clusterViewModel: ClusterViewModel
     // Initialize instantExecutorRule to run all in the same thread
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
@@ -32,11 +36,11 @@ class ClusterViewModelTest{
 
     @ExperimentalCoroutinesApi
     @Before
-    fun setup(){
+    fun setup() {
         Dispatchers.setMain(testDispatcher)
         `when`(repository.getCluster(anyLong())).thenReturn(MutableLiveData(Cluster()))
         clusterViewModel = ClusterViewModel(testDispatcher)
-        clusterViewModel.getCluster(-1L, listOf("Bearer Token"),repository)
+        clusterViewModel.getCluster(-1L, listOf("Bearer Token"), repository)
         clusterViewModel.cluster!!.value?.clusterName = "Test Cluster"
         clusterViewModel.cluster!!.value?.clusterAddress = "test.com"
         clusterViewModel.cluster!!.value?.clusterAuthenticationMethod = "Bearer Token"

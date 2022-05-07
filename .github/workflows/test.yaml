@@ -13,7 +13,7 @@ jobs:
           java-version: '11'
       
       - name: Run Kotlin Linter
-        run: .\gradlew ktlintStagingDebugCheck
+        run: ./gradlew ktlintStagingDebugCheck
       
       - name: Run Unit Test
         run: ./gradlew testDebugUnitTest

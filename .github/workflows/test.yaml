@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        microk8s-version: ['latest/stable']
+        microk8s-version: ['latest/stable','1.20/stable','1.21/stable','1.22/stable','1.23/stable','1.24/stable']
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -42,10 +42,10 @@ jobs:
 
   run-instrumented-tests:
     needs: run-unit-test
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [26]
+        api-level: [26,27,28,29,30,31,32]
         target: [default]
     steps:
       - name: checkout

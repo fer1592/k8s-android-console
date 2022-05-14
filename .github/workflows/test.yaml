@@ -59,6 +59,7 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: ./gradlew connectedCheck
+        continue-on-error: true
 
       - name: Android Test Report
         uses: asadmansr/android-test-report-action@v1.2.0

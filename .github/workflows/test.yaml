@@ -1,7 +1,7 @@
 name: Test on Pull Request
-on: pull_request
+on: [pull_request,push]
 jobs:
-  run-unit-tests:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -12,12 +12,52 @@ jobs:
           distribution: 'zulu'
           java-version: '11'
           cache: gradle
-      
+
       - name: ktlint
         uses: ScaCap/action-ktlint@master
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review # Change reporter
-      
-      - name: Run Unit Test
+  run-unit-test:
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        microk8s-version: ['latest/stable','1.20/stable','1.21/stable','1.22/stable','1.23/stable','1.24/stable']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: install microk8s
+        uses: balchua/microk8s-actions@v0.2.1
+        with:
+          channel: ${{ matrix.microk8s-version }}
+
+      - name: RUnit Test
         run: ./gradlew testDebugUnitTest
+
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+
+  run-instrumented-tests:
+    needs: run-unit-test
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [26, 27, 28, 29, 30, 31, 32]
+        target: [default, google_apis]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedCheck
+
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0

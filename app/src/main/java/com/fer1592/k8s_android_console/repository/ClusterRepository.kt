@@ -1,4 +1,4 @@
-package com.fer1592.k8s_android_console.data.repository
+package com.fer1592.k8s_android_console.repository
 
 import androidx.lifecycle.LiveData
 import com.fer1592.k8s_android_console.data.model.Cluster

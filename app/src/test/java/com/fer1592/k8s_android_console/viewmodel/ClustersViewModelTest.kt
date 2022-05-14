@@ -3,7 +3,7 @@ package com.fer1592.k8s_android_console.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.fer1592.k8s_android_console.data.model.Cluster
-import com.fer1592.k8s_android_console.data.repository.ClusterRepository
+import com.fer1592.k8s_android_console.repository.ClusterRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue

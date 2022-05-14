@@ -10,14 +10,19 @@ buildscript {
     ext.jupiter_version = '5.7.0'
     ext.mockito_version = '4.0.0'
     ext.archTestingVersion = '2.1.0'
+    ext.junit_version = '4.13.2'
+    ext.androidx_test_version = '1.4.0'
+    ext.espresso_version = '3.4.0'
+    ext.ui_automator_version = '2.2.0'
+    ext.compose_version = '1.1.1'
 
     dependencies {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
     }
 }
 plugins {
-    id 'com.android.application' version '7.1.3' apply false
-    id 'com.android.library' version '7.1.3' apply false
+    id 'com.android.application' version '7.2.0' apply false
+    id 'com.android.library' version '7.2.0' apply false
     id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
 }
 

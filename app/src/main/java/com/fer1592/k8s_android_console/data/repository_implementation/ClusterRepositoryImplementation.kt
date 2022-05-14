@@ -5,13 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import com.fer1592.k8s_android_console.data.db.ClusterDAO
 import com.fer1592.k8s_android_console.data.model.Cluster
 import com.fer1592.k8s_android_console.data.net.RetrofitClient
-import com.fer1592.k8s_android_console.data.repository.ClusterRepository
 import com.fer1592.k8s_android_console.db
+import com.fer1592.k8s_android_console.repository.ClusterRepository
 import retrofit2.awaitResponse
 import java.lang.Exception
 
-class ClusterRepositoryImplementation : ClusterRepository {
-    private val clusterDao: ClusterDAO = db.clusterDao()
+class ClusterRepositoryImplementation(private val clusterDao: ClusterDAO = db.clusterDao()) : ClusterRepository {
 
     override fun getCluster(clusterId: Long): LiveData<Cluster> {
         return if (clusterId == -1L) MutableLiveData(Cluster())

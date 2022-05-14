@@ -41,7 +41,12 @@ class ClusterRepositoryImplementationTest {
         clusterDao = Mockito.mock(ClusterDAO::class.java)
         clusterRepository = ClusterRepositoryImplementation(clusterDao)
 
-        val commandResult = Runtime.getRuntime().exec("microk8s config").inputStream.bufferedReader().readLines()
+        val pb = ProcessBuilder("sg", "microk8s", "-c", "microk8s config")
+        pb.redirectErrorStream(true)
+        val proc = pb.start()
+        val inputStream = proc.inputStream
+
+        val commandResult = inputStream.bufferedReader().readLines()
         val address = commandResult.find { item ->
             item.contains(".*server: https://.*".toRegex())
         }?.replace(" ", "")?.replace("server:", "")?.replace("https://", "")?.split(":")
@@ -54,7 +59,6 @@ class ClusterRepositoryImplementationTest {
     @ExperimentalCoroutinesApi
     @Test
     fun `test connection to kubernetes`() = runTest {
-        println(cluster.toString())
         val result = clusterRepository.testClusterConnection(cluster)
         Assert.assertTrue("Connection with kubernetes failed", result)
     }

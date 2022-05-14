@@ -54,6 +54,7 @@ class ClusterRepositoryImplementationTest {
     @ExperimentalCoroutinesApi
     @Test
     fun `test connection to kubernetes`() = runTest {
+        println(cluster.toString())
         val result = clusterRepository.testClusterConnection(cluster)
         Assert.assertTrue("Connection with kubernetes failed", result)
     }

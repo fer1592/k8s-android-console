@@ -98,7 +98,10 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
           force-avd-creation: false
+          arch: x86_64
+          profile: Nexus 6
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
@@ -108,6 +111,9 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
+          force-avd-creation: false
           arch: x86_64
           profile: Nexus 6
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: ./gradlew connectedCheck -Daddress="${{ steps.microk8s-data.outputs.ADDRESS }}" -Dport="${{ steps.microk8s-data.outputs.PORT }}" -Dtoken="${{ steps.microk8s-data.outputs.TOKEN }}"

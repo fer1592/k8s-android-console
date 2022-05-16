@@ -1,51 +1,51 @@
 name: Test on Pull Request
 on: [pull_request]
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '11'
-          cache: gradle
-
-      - name: ktlint
-        uses: ScaCap/action-ktlint@master
-        with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-pr-review # Change reporter
-  run-unit-test:
-    needs: lint
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        microk8s-version: ['latest/stable','1.20/stable','1.21/stable','1.22/stable','1.23/stable','1.24/stable']
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: install microk8s
-        uses: balchua/microk8s-actions@v0.2.1
-        with:
-          channel: ${{ matrix.microk8s-version }}
-
-      - name: RUnit Test
-        run: ./gradlew testDebugUnitTest
-        continue-on-error: true
-
-      - name: Android Test Report
-        uses: asadmansr/android-test-report-action@v1.2.0
+  #lint:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Checkout code
+  #      uses: actions/checkout@v3
+#
+  #    - uses: actions/setup-java@v3
+  #      with:
+  #        distribution: 'zulu'
+  #        java-version: '11'
+  #        cache: gradle
+#
+  #    - name: ktlint
+  #      uses: ScaCap/action-ktlint@master
+  #      with:
+  #        github_token: ${{ secrets.github_token }}
+  #        reporter: github-pr-review # Change reporter
+  #run-unit-test:
+  #  needs: lint
+  #  runs-on: ubuntu-latest
+  #  strategy:
+  #    matrix:
+  #      microk8s-version: ['latest/stable','1.20/stable','1.21/stable','1.22/stable','1.23/stable','1.24/stable']
+  #  steps:
+  #    - name: Checkout code
+  #      uses: actions/checkout@v3
+#
+  #    - name: install microk8s
+  #      uses: balchua/microk8s-actions@v0.2.1
+  #      with:
+  #        channel: ${{ matrix.microk8s-version }}
+#
+  #    - name: RUnit Test
+  #      run: ./gradlew testDebugUnitTest
+  #      continue-on-error: true
+#
+  #    - name: Android Test Report
+  #      uses: asadmansr/android-test-report-action@v1.2.0
 
   run-instrumented-tests:
-    needs: run-unit-test
+    #needs: run-unit-test
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [26,27,28,29]
+        api-level: [26]
         target: [default]
     steps:
       - name: checkout
@@ -76,13 +76,32 @@ jobs:
       - name: get microk8s connection data
         id: microk8s-data
         run: |
-          token=$(sudo microk8s config | yq -r .users[0].user.token)
           full_address=$(sudo microk8s config | yq -r .clusters[0].cluster.server | sed "s/https:\/\///g")
-          address=$(echo $full_address | cut -d ":" -f 1)
-          port=$(echo $full_address | cut -d ":" -f 2)
-          echo '::set-output name=ADDRESS::${address}'
-          echo '::set-output name=PORT::${port}'
-          echo '::set-output name=TOKEN::${token}'
+          echo '::set-output name=ADDRESS::$(echo $full_address | cut -d ":" -f 1)'
+          echo '::set-output name=PORT::$(echo $full_address | cut -d ":" -f 2)'
+          echo '::set-output name=TOKEN::$(sudo microk8s config | yq -r .users[0].user.token)'
+
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
 
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2

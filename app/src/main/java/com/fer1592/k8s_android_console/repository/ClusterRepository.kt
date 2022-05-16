@@ -20,6 +20,9 @@ interface ClusterRepository {
     // Function to delete a cluster
     suspend fun deleteCluster(cluster: Cluster): Boolean
 
+    // Function to cleanup the database. Used only on tests
+    suspend fun cleanUpClusters()
+
     // Function to test cluster connection
     suspend fun testClusterConnection(cluster: Cluster): Boolean
 }

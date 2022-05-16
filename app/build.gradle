@@ -77,10 +77,13 @@ dependencies {
     androidTestImplementation "androidx.test:rules:$androidx_test_version"
     // UI testing with Espresso
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     // UI testing with UI Automator
     androidTestImplementation "androidx.test.uiautomator:uiautomator:$ui_automator_version"
     // UI testing with Compose
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    // Used to test fragments
+    debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

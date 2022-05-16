@@ -24,4 +24,7 @@ interface ClusterDAO {
 
     @Query("SELECT * FROM Cluster ORDER BY clusterId ASC")
     fun getAllClusters(): LiveData<List<Cluster>>
+
+    @Query("DELETE FROM Cluster")
+    fun deleteAllClusters()
 }

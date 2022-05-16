@@ -35,6 +35,10 @@ class ClusterRepositoryImplementation(private val clusterDao: ClusterDAO = db.cl
         return (clusterDao.delete(cluster) != 0)
     }
 
+    override suspend fun cleanUpClusters() {
+        clusterDao.deleteAllClusters()
+    }
+
     override suspend fun testClusterConnection(cluster: Cluster): Boolean {
         return if (cluster.clusterAddress.isNotEmpty() and (cluster.clusterPort in 1..49151)) {
             val retrofitClient = RetrofitClient(cluster.clusterAddress, cluster.clusterPort)

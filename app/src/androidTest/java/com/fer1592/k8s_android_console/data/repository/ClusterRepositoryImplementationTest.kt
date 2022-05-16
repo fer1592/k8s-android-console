@@ -32,7 +32,9 @@ class ClusterRepositoryImplementationTest {
 
     @After
     @Throws(IOException::class)
-    fun closeDb() {
+    @ExperimentalCoroutinesApi
+    fun closeDb() = runTest {
+        clusterRepository.cleanUpClusters()
         db.close()
     }
 

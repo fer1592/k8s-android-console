@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.fer1592.k8s_android_console.R
 import com.fer1592.k8s_android_console.databinding.FragmentSetClusterBinding
+import com.fer1592.k8s_android_console.view.activities.MainActivity
 import com.fer1592.k8s_android_console.viewmodel.ClusterViewModel
 
 class SetClusterFragment : Fragment() {
@@ -35,10 +36,13 @@ class SetClusterFragment : Fragment() {
         val clusterViewModel = ViewModelProvider(this)[ClusterViewModel::class.java]
         clusterViewModel.getCluster(clusterId, authMethods)
 
-        if (clusterId == (-1).toLong()) {
-            (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.add_cluster)
-        } else (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.update_cluster)
-
+        if (activity is MainActivity) {
+            if (clusterId == (-1).toLong()) {
+                (activity as AppCompatActivity).supportActionBar?.title =
+                    getString(R.string.add_cluster)
+            } else (activity as AppCompatActivity).supportActionBar?.title =
+                getString(R.string.update_cluster)
+        }
         binding.clusterViewModel = clusterViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 

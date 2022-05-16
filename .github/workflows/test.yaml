@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [26,27,28,29,30,31,32]
+        api-level: [26,27,28,29]
         target: [default]
     steps:
       - name: checkout
@@ -57,6 +57,33 @@ jobs:
           java-version: '11'
           cache: gradle
 
+      - name: install microk8s
+        uses: balchua/microk8s-actions@v0.2.1
+        with:
+          channel: 'latest/stable'
+
+      - name: install python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: install yq library
+        uses: BSFishy/pip-action@v1
+        with:
+          packages: |
+            yq
+
+      - name: get microk8s connection data
+        id: microk8s-data
+        run: |
+          token=$(sudo microk8s config | yq -r .users[0].user.token)
+          full_address=$(sudo microk8s config | yq -r .clusters[0].cluster.server | sed "s/https:\/\///g")
+          address=$(echo $full_address | cut -d ":" -f 1)
+          port=$(echo $full_address | cut -d ":" -f 2)
+          echo '::set-output name=ADDRESS::${address}'
+          echo '::set-output name=PORT::${port}'
+          echo '::set-output name=TOKEN::${token}'
+
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -64,8 +91,4 @@ jobs:
           target: ${{ matrix.target }}
           arch: x86_64
           profile: Nexus 6
-          script: ./gradlew connectedCheck
-        continue-on-error: true
-
-      - name: Android Test Report
-        uses: asadmansr/android-test-report-action@v1.2.0
+          script: ./gradlew connectedCheck -Daddress="${{ steps.microk8s-data.outputs.ADDRESS }}" -Dport="${{ steps.microk8s-data.outputs.PORT }}" -Dtoken="${{ steps.microk8s-data.outputs.TOKEN }}"

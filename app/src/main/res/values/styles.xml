@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RecyclerViewItemComplementary">
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:padding">8sp</item>
+    </style>
+    <style name="RecyclerViewItemMain">
+        <item name="android:textSize">36sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:padding">8sp</item>
+    </style>
+    <style name="InputItem">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:textColorHint">#78909C</item>
+    </style>
+    <style name="InputLayout">
+        <item name="boxBackgroundColor">@color/white</item>
+    </style>
+    <style name="Button">
+        <item name="android:layout_margin">8dp</item>
+    </style>
+    <style name="SpinnerItem" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="ClusterCard">
+        <item name="cardElevation">@dimen/cardElevation</item>
+        <item name="cardCornerRadius">@dimen/cardRadius</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+    <style name="textViewAsButton">
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/violet</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

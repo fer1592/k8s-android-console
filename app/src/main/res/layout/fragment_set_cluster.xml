@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.fragments.SetClusterFragment" >
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="clusterViewModel"
+            type="com.fer1592.k8s_android_console.viewmodel.ClusterViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/edit_constraint_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/cluster_name_input_layout"
+                    style="@style/InputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/cluster_name"
+                        style="@style/InputItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/cluster_name"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:text="@={ clusterViewModel.cluster.clusterName }" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/https_text"
+                    style="@style/InputItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/https"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toTopOf="@+id/cluster_authentication_method"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_name_input_layout" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/cluster_address_input_layout"
+                    style="@style/InputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toStartOf="@+id/cluster_port_input_layout"
+                    app:layout_constraintStart_toEndOf="@+id/https_text"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_name_input_layout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/cluster_address"
+                        style="@style/InputItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/address_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="textUri"
+                        android:text="@={ clusterViewModel.cluster.clusterAddress }" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/cluster_port_input_layout"
+                    style="@style/InputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_name_input_layout"
+                    app:layout_constraintWidth_percent="0.25">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/cluster_port"
+                        style="@style/InputItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/port"
+                        android:importantForAutofill="no"
+                        android:inputType="number"
+                        android:text="@={ `` + clusterViewModel.cluster.clusterPort }" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <Spinner
+                    android:id="@+id/cluster_authentication_method"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:contentDescription="@string/authentication_method"
+                    android:minHeight="48dp"
+                    android:onItemSelected="@{ () -> clusterViewModel.setAuthMethod(clusterAuthenticationMethod.getSelectedItemPosition()) }"
+                    android:selectedItemPosition="@{ clusterViewModel.authMethods.indexOf(clusterViewModel.cluster.clusterAuthenticationMethod) }"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_address_input_layout"
+                    tools:layout_editor_absoluteX="8dp" />
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/cluster_bearer_token_input_layout"
+                    style="@style/InputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{ clusterViewModel.requestBearerToken ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintTop_toBottomOf="@+id/cluster_authentication_method" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/cluster_bearer_token"
+                    style="@style/InputItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/bearer_token"
+                    android:inputType="text"
+                    android:importantForAutofill="no"
+                    android:text="@={ clusterViewModel.cluster.clusterBearerToken }"
+                     />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/add_cluster"
+                style="@style/Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{ () -> clusterViewModel.addCluster() }"
+                android:text="@string/add_cluster"
+                android:visibility="@{ clusterViewModel.clusterId == -1 ? View.VISIBLE : View.GONE }"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout" />
+
+            <Button
+                android:id="@+id/update_cluster"
+                style="@style/Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{ () -> clusterViewModel.updateCluster() }"
+                android:text="@string/update_cluster"
+                android:visibility="@{ clusterViewModel.clusterId != -1 ? View.VISIBLE : View.GONE }"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout" />
+
+            <Button
+                android:id="@+id/test_connection"
+                style="@style/Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/test_connection"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_constraint_layout"
+                android:onClick="@{ () -> clusterViewModel.testConnection() }" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

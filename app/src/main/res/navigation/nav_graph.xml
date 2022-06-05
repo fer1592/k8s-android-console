@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_clusters" >
         <action
             android:id="@+id/action_clustersFragment_to_setClusterFragment"
-            app:destination="@id/setClusterFragment" />
+            app:destination="@id/setClusterFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/helpFragment"
@@ -30,8 +34,12 @@
             android:defaultValue="-1L" />
         <action
             android:id="@+id/action_setClusterFragment_to_clustersFragment"
-            app:popUpToInclusive="true"
+            app:destination="@id/clustersFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/clustersFragment"
-            app:destination="@id/clustersFragment" />
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

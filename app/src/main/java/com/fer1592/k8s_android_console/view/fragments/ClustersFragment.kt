@@ -90,4 +90,9 @@ class ClustersFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.clustersList.scheduleLayoutAnimation()
+    }
 }

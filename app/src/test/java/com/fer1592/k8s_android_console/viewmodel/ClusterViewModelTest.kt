@@ -62,7 +62,8 @@ class ClusterViewModelTest {
 
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        assertTrue("Record was not inserted into the database", ((isValid == true) and navigateOut))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == true) and navigateOut and processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -74,7 +75,8 @@ class ClusterViewModelTest {
 
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        assertTrue("Record was not inserted into the database", ((isValid == true) and navigateOut))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == true) and navigateOut and processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -87,7 +89,8 @@ class ClusterViewModelTest {
 
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        assertTrue("Record was not updated into the database", ((isValid == true) and navigateOut))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not updated into the database", ((isValid == true) and navigateOut and processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -100,7 +103,8 @@ class ClusterViewModelTest {
 
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        assertTrue("Record was not updated into the database", ((isValid == true) and navigateOut))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not updated into the database", ((isValid == true) and navigateOut and processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -125,7 +129,8 @@ class ClusterViewModelTest {
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
         val validName = clusterViewModel.cluster!!.value?.validName ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validName))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validName and !processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -138,7 +143,8 @@ class ClusterViewModelTest {
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
         val validName = clusterViewModel.cluster!!.value?.validName ?: true
-        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validName))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validName and !processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -151,7 +157,8 @@ class ClusterViewModelTest {
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
         val validAddress = clusterViewModel.cluster!!.value?.validClusterAddress ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validAddress))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validAddress and !processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -164,7 +171,8 @@ class ClusterViewModelTest {
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
         val validAddress = clusterViewModel.cluster!!.value?.validClusterAddress ?: true
-        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validAddress))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validAddress and !processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -177,7 +185,8 @@ class ClusterViewModelTest {
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
         val validPort = clusterViewModel.cluster!!.value?.validClusterPort ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validPort))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validPort and !processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -190,7 +199,8 @@ class ClusterViewModelTest {
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
         val validPort = clusterViewModel.cluster!!.value?.validClusterPort ?: true
-        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validPort))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validPort and !processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -203,7 +213,8 @@ class ClusterViewModelTest {
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
         val validBearerToken = clusterViewModel.cluster!!.value?.validClusterBearerToken ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validBearerToken))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validBearerToken and !processingData))
     }
 
     @ExperimentalCoroutinesApi
@@ -216,6 +227,7 @@ class ClusterViewModelTest {
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
         val validBearerToken = clusterViewModel.cluster!!.value?.validClusterBearerToken ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validBearerToken))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validBearerToken and !processingData))
     }
 }

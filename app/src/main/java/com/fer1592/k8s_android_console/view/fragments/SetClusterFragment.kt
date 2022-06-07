@@ -65,6 +65,7 @@ class SetClusterFragment : Fragment() {
             }
         }
 
+        // Sets observer to show or hide error messages
         clusterViewModel.isInputValid.observe(viewLifecycleOwner) { isValid ->
             if (isValid == true || isValid == null) {
                 binding.clusterNameInputLayout.error = null
@@ -86,6 +87,7 @@ class SetClusterFragment : Fragment() {
             }
         }
 
+        // Sets observer to show a TOAST when connection is or not successful
         clusterViewModel.connectionTestSuccessful.observe(viewLifecycleOwner) { connectionTestSuccessful ->
             connectionTestSuccessful?.let {
                 if (it) Toast.makeText(context, R.string.connection_succeeded, Toast.LENGTH_SHORT).show()
@@ -93,7 +95,31 @@ class SetClusterFragment : Fragment() {
             }
         }
 
+        // Sets observer to show progress bar and disable add/update buttons when submiting data
+        clusterViewModel.processingData.observe(viewLifecycleOwner) {
+            binding.addCluster.isEnabled = !it
+            binding.updateCluster.isEnabled = !it
+            if (it) showLoading()
+            else hideLoading()
+        }
+
+        // Sets observer to hide the progress bar when data is being load for edition
+        clusterViewModel.cluster?.observe(viewLifecycleOwner) {
+            hideLoading()
+        }
+
+        showLoading()
         return view
+    }
+
+    private fun showLoading() {
+        (activity as MainActivity).binding.mainProgressBar.visibility = View.VISIBLE
+        (activity as MainActivity).binding.navHostFragment.visibility = View.GONE
+    }
+
+    private fun hideLoading(){
+        (activity as MainActivity).binding.mainProgressBar.visibility = View.GONE
+        (activity as MainActivity).binding.navHostFragment.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

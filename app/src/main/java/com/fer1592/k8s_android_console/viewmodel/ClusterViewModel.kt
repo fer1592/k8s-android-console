@@ -39,6 +39,11 @@ class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers
     val isInputValid: LiveData<Boolean?>
         get() = _isInputValid
 
+    // Live data to disable add/update button
+    private val _processingData = MutableLiveData(false)
+    val processingData: LiveData<Boolean>
+        get() = _processingData
+
     // Function that init the viewModel
     fun getCluster(clusterId: Long, authMethods: List<String>, clusterRepository: ClusterRepository = ClusterRepositoryImplementation()) {
         this.clusterId = clusterId
@@ -51,10 +56,14 @@ class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers
     fun addCluster() {
         viewModelScope.launch(dispatcher) {
             cluster?.value?.let {
+                _processingData.postValue(true)
                 if (clusterRepository?.addCluster(it) == true) {
                     _isInputValid.postValue(true)
                     _navigateToClusterList.postValue(true)
-                } else _isInputValid.postValue(false)
+                } else {
+                    _isInputValid.postValue(false)
+                    _processingData.postValue(false)
+                }
             }
         }
     }
@@ -63,10 +72,14 @@ class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers
     fun updateCluster() {
         viewModelScope.launch(dispatcher) {
             cluster?.value?.let {
+                _processingData.postValue(true)
                 if (clusterRepository?.updateCluster(it) == true) {
                     _isInputValid.postValue(true)
                     _navigateToClusterList.postValue(true)
-                } else _isInputValid.postValue(false)
+                } else {
+                    _isInputValid.postValue(false)
+                    _processingData.postValue(false)
+                }
             }
         }
     }

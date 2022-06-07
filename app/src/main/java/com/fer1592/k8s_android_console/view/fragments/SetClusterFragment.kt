@@ -117,7 +117,7 @@ class SetClusterFragment : Fragment() {
         (activity as MainActivity).binding.navHostFragment.visibility = View.GONE
     }
 
-    private fun hideLoading(){
+    private fun hideLoading() {
         (activity as MainActivity).binding.mainProgressBar.visibility = View.GONE
         (activity as MainActivity).binding.navHostFragment.visibility = View.VISIBLE
     }

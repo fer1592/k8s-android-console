@@ -176,24 +176,24 @@ class ClusterRepositoryImplementationTest {
     }
 
     // Connection test is done with a real api, which is a locally deployed instance of microk8s
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `test connection to kubernetes`() = runTest {
-        val pb = ProcessBuilder("sg", "microk8s", "-c", "microk8s config")
-        pb.redirectErrorStream(true)
-        val proc = pb.start()
-        val inputStream = proc.inputStream
-
-        val commandResult = inputStream.bufferedReader().readLines()
-        val address = commandResult.find { item ->
-            item.contains(".*server: https://.*".toRegex())
-        }?.replace(" ", "")?.replace("server:", "")?.replace("https://", "")?.split(":")
-        val token = commandResult.find { item ->
-            item.contains(".*token:.*".toRegex())
-        }?.replace(" ", "")?.replace("token:", "")
-        cluster = Cluster(0, "Test Cluster", address?.get(0) ?: "192.168.1.1", address?.get(1)?.toInt() ?: 8443, "Bearer Token", token ?: "TestToken")
-
-        val result = clusterRepository.testClusterConnection(cluster)
-        Assert.assertTrue("Connection with kubernetes failed", result)
-    }
+    // @ExperimentalCoroutinesApi
+    // @Test
+    // fun `test connection to kubernetes`() = runTest {
+    //     val pb = ProcessBuilder("sg", "microk8s", "-c", "microk8s config")
+    //     pb.redirectErrorStream(true)
+    //     val proc = pb.start()
+    //     val inputStream = proc.inputStream
+//
+    //     val commandResult = inputStream.bufferedReader().readLines()
+    //     val address = commandResult.find { item ->
+    //         item.contains(".*server: https://.*".toRegex())
+    //     }?.replace(" ", "")?.replace("server:", "")?.replace("https://", "")?.split(":")
+    //     val token = commandResult.find { item ->
+    //         item.contains(".*token:.*".toRegex())
+    //     }?.replace(" ", "")?.replace("token:", "")
+    //     cluster = Cluster(0, "Test Cluster", address?.get(0) ?: "192.168.1.1", address?.get(1)?.toInt() ?: 8443, "Bearer Token", token ?: "TestToken")
+//
+    //     val result = clusterRepository.testClusterConnection(cluster)
+    //     Assert.assertTrue("Connection with kubernetes failed", result)
+    // }
 }

@@ -13,6 +13,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -26,15 +27,20 @@ class ClustersViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
+    private val testDispatcher = UnconfinedTestDispatcher()
+
     @MockK
     lateinit var repository: ClusterRepository
 
+    @ExperimentalCoroutinesApi
     @Before
     fun setUp() {
         MockKAnnotations.init(this, relaxUnitFun = true)
         cluster = mockk()
+        repository = mockk()
         every { repository.getAllClusters() } returns MutableLiveData(listOf(cluster))
-        clustersViewModel = ClustersViewModel(repository)
+        clustersViewModel = ClustersViewModel(repository, testDispatcher)
     }
 
     @ExperimentalCoroutinesApi

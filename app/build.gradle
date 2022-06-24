@@ -66,10 +66,6 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-
-    // Mockito framework
-    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_version"
-    testImplementation "org.mockito:mockito-core:$mockito_version"
     // Mockk framework
     testImplementation "io.mockk:mockk:$mockk_version"
     // For runBlockingTest

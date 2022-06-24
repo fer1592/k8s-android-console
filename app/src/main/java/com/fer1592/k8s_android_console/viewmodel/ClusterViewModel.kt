@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fer1592.k8s_android_console.R
 import com.fer1592.k8s_android_console.data.model.Cluster
-import com.fer1592.k8s_android_console.data.repository_implementation.ClusterRepositoryImplementation
+import com.fer1592.k8s_android_console.data.repositoryimplementation.ClusterRepositoryImplementation
 import com.fer1592.k8s_android_console.repository.ClusterRepository
 import com.fer1592.k8s_android_console.util.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher

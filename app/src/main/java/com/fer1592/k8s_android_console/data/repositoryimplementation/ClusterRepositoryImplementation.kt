@@ -1,4 +1,4 @@
-package com.fer1592.k8s_android_console.data.repository_implementation
+package com.fer1592.k8s_android_console.data.repositoryimplementation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,33 +8,50 @@ import com.fer1592.k8s_android_console.data.net.RetrofitClient
 import com.fer1592.k8s_android_console.db
 import com.fer1592.k8s_android_console.repository.ClusterRepository
 import retrofit2.awaitResponse
-import java.lang.Exception
+import kotlin.Exception
 
 class ClusterRepositoryImplementation(private val clusterDao: ClusterDAO = db.clusterDao()) : ClusterRepository {
 
-    override fun getCluster(clusterId: Long): LiveData<Cluster> {
+    override suspend fun getCluster(clusterId: Long): LiveData<Cluster> {
         return if (clusterId == -1L) MutableLiveData(Cluster())
         else clusterDao.getCluster(clusterId)
     }
 
+    override fun clusterIsValid(cluster: Cluster): Boolean {
+        return cluster.isValid()
+    }
+
     override suspend fun addCluster(cluster: Cluster): Boolean {
         return if (cluster.isValid()) {
-            clusterDao.insert(cluster)
-            true
+            try {
+                clusterDao.insert(cluster)
+                true
+            } catch (e: Exception) {
+                false
+            }
         } else false
     }
 
     override suspend fun updateCluster(cluster: Cluster): Boolean {
         return if (cluster.isValid()) {
-            clusterDao.update(cluster)
-            true
+            try {
+                clusterDao.update(cluster)
+                true
+            } catch (e: Exception) {
+                false
+            }
         } else false
     }
 
     override suspend fun deleteCluster(cluster: Cluster): Boolean {
-        return (clusterDao.delete(cluster) != 0)
+        return try {
+            (clusterDao.delete(cluster) != 0)
+        } catch (e: Exception) {
+            false
+        }
     }
 
+    // function to be used only on UI tests
     override suspend fun cleanUpClusters() {
         clusterDao.deleteAllClusters()
     }

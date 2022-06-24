@@ -4,6 +4,14 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.fer1592.k8s_android_console.data.model.Cluster
 import com.fer1592.k8s_android_console.repository.ClusterRepository
+import com.fer1592.k8s_android_console.util.EspressoIdlingResource
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
+import io.mockk.mockkObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -15,13 +23,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyLong
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
 class ClusterViewModelTest {
     private lateinit var clusterViewModel: ClusterViewModel
     // Initialize instantExecutorRule to run all in the same thread
@@ -31,20 +33,24 @@ class ClusterViewModelTest {
     @ExperimentalCoroutinesApi
     private val testDispatcher = UnconfinedTestDispatcher()
 
-    @Mock
+    @MockK
     lateinit var repository: ClusterRepository
+
+    @MockK
+    lateinit var cluster: MutableLiveData<Cluster>
 
     @ExperimentalCoroutinesApi
     @Before
-    fun setup() {
+    fun setUp() = runTest {
+        MockKAnnotations.init(this, relaxUnitFun = true)
         Dispatchers.setMain(testDispatcher)
-        `when`(repository.getCluster(anyLong())).thenReturn(MutableLiveData(Cluster()))
+        mockkObject(EspressoIdlingResource)
+        repository = mockk()
+        cluster = mockk()
         clusterViewModel = ClusterViewModel(testDispatcher)
-        clusterViewModel.getCluster(-1L, listOf("Bearer Token"), repository)
-        clusterViewModel.cluster!!.value?.clusterName = "Test Cluster"
-        clusterViewModel.cluster!!.value?.clusterAddress = "test.com"
-        clusterViewModel.cluster!!.value?.clusterAuthenticationMethod = "Bearer Token"
-        clusterViewModel.cluster!!.value?.clusterBearerToken = "TestToken"
+        coEvery { repository.getCluster(0L) } returns cluster
+        clusterViewModel.getCluster(0L, listOf("Bearer Token"), repository)
+        every { cluster.value } returns mockk()
     }
 
     @ExperimentalCoroutinesApi
@@ -55,167 +61,97 @@ class ClusterViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun `ensure cluster can be added (Using IP as cluster address)`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterAddress = "192.168.1.1"
-        `when`(repository.addCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
+    fun `test get cluster`() = runTest {
+        coEvery { repository.getCluster(5L) } returns mockk()
+        clusterViewModel.getCluster(5L, listOf("Bearer Token"), repository)
+        coVerify(exactly = 1) { repository.getCluster(5L) }
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Process didn't finish", !processingData)
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun `test add cluster`() = runTest {
+        coEvery { repository.addCluster(any()) } returns true
         clusterViewModel.addCluster()
-
+        coVerify(exactly = 1) { repository.addCluster(any()) }
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        assertTrue("Record was not inserted into the database", ((isValid == true) and navigateOut))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == true) and navigateOut and !processingData))
     }
 
     @ExperimentalCoroutinesApi
     @Test
-    fun `ensure cluster can be added (Using Url as cluster address)`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterAddress = "test.com"
-        `when`(repository.addCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
+    fun `test add cluster failed because invalid`() = runTest {
+        coEvery { repository.addCluster(any()) } returns false
+        coEvery { repository.clusterIsValid(any()) } returns false
         clusterViewModel.addCluster()
-
+        coVerify(exactly = 1) { repository.addCluster(any()) }
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        assertTrue("Record was not inserted into the database", ((isValid == true) and navigateOut))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !processingData))
     }
 
     @ExperimentalCoroutinesApi
     @Test
-    fun `ensure cluster can be updated (Using IP as cluster address)`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterAddress = "192.168.1.1"
-        clusterViewModel.cluster!!.value?.clusterId = 0
-        `when`(repository.updateCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
+    fun `test add cluster failed because unexpected problem`() = runTest {
+        coEvery { repository.addCluster(any()) } returns false
+        coEvery { repository.clusterIsValid(any()) } returns true
+        clusterViewModel.addCluster()
+        coVerify(exactly = 1) { repository.addCluster(any()) }
+        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
+        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid != false) and !navigateOut and !processingData))
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun `test update cluster`() = runTest {
+        coEvery { repository.updateCluster(any()) } returns true
         clusterViewModel.updateCluster()
-
+        coVerify(exactly = 1) { repository.updateCluster(any()) }
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        assertTrue("Record was not updated into the database", ((isValid == true) and navigateOut))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == true) and navigateOut and !processingData))
     }
 
     @ExperimentalCoroutinesApi
     @Test
-    fun `ensure cluster can be update (Using Url as cluster address)`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterAddress = "test.com"
-        clusterViewModel.cluster!!.value?.clusterId = 0
-        `when`(repository.updateCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
+    fun `test update cluster failed because invalid`() = runTest {
+        coEvery { repository.updateCluster(any()) } returns false
+        coEvery { repository.clusterIsValid(any()) } returns false
         clusterViewModel.updateCluster()
-
+        coVerify(exactly = 1) { repository.updateCluster(any()) }
         val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
         val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        assertTrue("Record was not updated into the database", ((isValid == true) and navigateOut))
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !processingData))
     }
 
     @ExperimentalCoroutinesApi
     @Test
-    fun `ensure live data value is updated when test connection is executed`() = runTest {
-        `when`(repository.testClusterConnection(clusterViewModel.cluster?.value!!)).thenReturn(true)
+    fun `test update cluster failed because unexpected problem`() = runTest {
+        coEvery { repository.updateCluster(any()) } returns false
+        coEvery { repository.clusterIsValid(any()) } returns true
+        clusterViewModel.updateCluster()
+        coVerify(exactly = 1) { repository.updateCluster(any()) }
+        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
+        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Record was not inserted into the database", ((isValid != false) and !navigateOut and !processingData))
+    }
 
+    @ExperimentalCoroutinesApi
+    @Test
+    fun `test connection testing`() = runTest {
+        coEvery { repository.testClusterConnection(any()) } returns true
         clusterViewModel.testConnection()
-
-        val testConnectionResult = clusterViewModel.connectionTestSuccessful.getOrAwaitValue()
-
-        assertTrue("Connection was not successful", testConnectionResult == true)
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `ensure cluster can't be added if an Empty name is set`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterName = ""
-        `when`(repository.addCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
-        clusterViewModel.addCluster()
-
-        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
-        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        val validName = clusterViewModel.cluster!!.value?.validName ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validName))
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `ensure cluster can't be updated if an Empty name is set`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterName = ""
-        `when`(repository.updateCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
-        clusterViewModel.updateCluster()
-
-        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
-        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        val validName = clusterViewModel.cluster!!.value?.validName ?: true
-        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validName))
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `ensure cluster can't be added if an Empty Address is set`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterAddress = ""
-        `when`(repository.addCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
-        clusterViewModel.addCluster()
-
-        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
-        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        val validAddress = clusterViewModel.cluster!!.value?.validClusterAddress ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validAddress))
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `ensure cluster can't be updated if an Empty Address is set`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterAddress = ""
-        `when`(repository.updateCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
-        clusterViewModel.updateCluster()
-
-        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
-        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        val validAddress = clusterViewModel.cluster!!.value?.validClusterAddress ?: true
-        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validAddress))
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `ensure cluster can't be added if a Port out of range is set`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterPort = 0
-        `when`(repository.addCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
-        clusterViewModel.addCluster()
-
-        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
-        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        val validPort = clusterViewModel.cluster!!.value?.validClusterPort ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validPort))
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `ensure cluster can't be updated if a Port out of range is set`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterPort = 49152
-        `when`(repository.updateCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
-        clusterViewModel.updateCluster()
-
-        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
-        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        val validPort = clusterViewModel.cluster!!.value?.validClusterPort ?: true
-        assertTrue("Record was not updated into the database", ((isValid == false) and !navigateOut and !validPort))
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `ensure cluster can't be added if an Empty BearerToken is set`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterBearerToken = ""
-        `when`(repository.addCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
-        clusterViewModel.addCluster()
-
-        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
-        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        val validBearerToken = clusterViewModel.cluster!!.value?.validClusterBearerToken ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validBearerToken))
-    }
-
-    @ExperimentalCoroutinesApi
-    @Test
-    fun `ensure cluster can't be updated if an Empty BearerToken is set`() = runTest {
-        clusterViewModel.cluster!!.value?.clusterBearerToken = ""
-        `when`(repository.updateCluster(clusterViewModel.cluster?.value!!)).thenReturn(clusterViewModel.cluster?.value!!.isValid())
-        clusterViewModel.updateCluster()
-
-        val isValid = clusterViewModel.isInputValid.getOrAwaitValue()
-        val navigateOut = clusterViewModel.navigateToClusterList.getOrAwaitValue()
-        val validBearerToken = clusterViewModel.cluster!!.value?.validClusterBearerToken ?: true
-        assertTrue("Record was not inserted into the database", ((isValid == false) and !navigateOut and !validBearerToken))
+        val testConnectionResult = clusterViewModel.displayMessage.getOrAwaitValue()
+        val processingData = clusterViewModel.processingData.getOrAwaitValue()
+        assertTrue("Connection was not successful", (testConnectionResult != null) and !processingData)
     }
 }

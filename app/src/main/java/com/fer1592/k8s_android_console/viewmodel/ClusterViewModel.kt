@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fer1592.k8s_android_console.R
 import com.fer1592.k8s_android_console.data.model.Cluster
-import com.fer1592.k8s_android_console.data.repository_implementation.ClusterRepositoryImplementation
+import com.fer1592.k8s_android_console.data.repositoryimplementation.ClusterRepositoryImplementation
 import com.fer1592.k8s_android_console.repository.ClusterRepository
+import com.fer1592.k8s_android_console.util.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,44 +32,70 @@ class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers
         get() = _requestBearerToken
 
     // Live data to show if connection test was successful
-    private val _connectionTestSuccessful = MutableLiveData<Boolean?>(null)
-    val connectionTestSuccessful: LiveData<Boolean?>
-        get() = _connectionTestSuccessful
+    private val _displayMessage = MutableLiveData<Int?>(null)
+    val displayMessage: LiveData<Int?>
+        get() = _displayMessage
 
     // Live data to show input data errors
     private val _isInputValid = MutableLiveData<Boolean?>(null)
     val isInputValid: LiveData<Boolean?>
         get() = _isInputValid
 
+    // Live data to disable add/update button
+    private val _processingData = MutableLiveData(false)
+    val processingData: LiveData<Boolean>
+        get() = _processingData
+
     // Function that init the viewModel
     fun getCluster(clusterId: Long, authMethods: List<String>, clusterRepository: ClusterRepository = ClusterRepositoryImplementation()) {
         this.clusterId = clusterId
         this.clusterRepository = clusterRepository
-        this.cluster = clusterRepository.getCluster(clusterId)
         this.authMethods = authMethods
+        EspressoIdlingResource.increment()
+        viewModelScope.launch(dispatcher) {
+            _processingData.postValue(true)
+            cluster = clusterRepository.getCluster(clusterId)
+            _processingData.postValue(false)
+            EspressoIdlingResource.decrement()
+        }
     }
 
     // Function that creates a new cluster
     fun addCluster() {
+        EspressoIdlingResource.increment()
         viewModelScope.launch(dispatcher) {
+            _processingData.postValue(true)
             cluster?.value?.let {
                 if (clusterRepository?.addCluster(it) == true) {
                     _isInputValid.postValue(true)
                     _navigateToClusterList.postValue(true)
-                } else _isInputValid.postValue(false)
+                } else {
+                    if (clusterRepository?.clusterIsValid(it) == true) _displayMessage.postValue(R.string.error_add_cluster)
+                    else _isInputValid.postValue(false)
+                }
             }
+            _processingData.postValue(false)
+            EspressoIdlingResource.decrement()
         }
     }
 
     // Function that updates an existing cluster
     fun updateCluster() {
+        EspressoIdlingResource.increment()
         viewModelScope.launch(dispatcher) {
+            _processingData.postValue(true)
             cluster?.value?.let {
+                _processingData.postValue(true)
                 if (clusterRepository?.updateCluster(it) == true) {
                     _isInputValid.postValue(true)
                     _navigateToClusterList.postValue(true)
-                } else _isInputValid.postValue(false)
+                } else {
+                    if (clusterRepository?.clusterIsValid(it) == true) _displayMessage.postValue(R.string.error_update_cluster)
+                    else _isInputValid.postValue(false)
+                }
             }
+            _processingData.postValue(false)
+            EspressoIdlingResource.decrement()
         }
     }
 
@@ -89,10 +117,20 @@ class ClusterViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers
     }
 
     fun testConnection() {
+        EspressoIdlingResource.increment()
         viewModelScope.launch(dispatcher) {
+            _processingData.postValue(true)
             cluster?.value?.let {
-                _connectionTestSuccessful.postValue(clusterRepository?.testClusterConnection(it))
+                val connectionResult = clusterRepository?.testClusterConnection(it)
+                if (connectionResult == true) _displayMessage.postValue(R.string.connection_succeeded)
+                else if (connectionResult == false) _displayMessage.postValue(R.string.connection_failed)
             }
+            _processingData.postValue(false)
+            EspressoIdlingResource.decrement()
         }
+    }
+
+    fun clearMessages() {
+        _displayMessage.value = null
     }
 }

@@ -1,6 +1,7 @@
 package com.fer1592.k8s_android_console.view.activities
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
@@ -30,5 +31,20 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = builder.build()
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
         NavigationUI.setupWithNavController(binding.navView, navController)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    fun showLoading() {
+        binding.mainProgressBarFrameLayout.visibility = View.VISIBLE
+        binding.navHostFragment.visibility = View.GONE
+    }
+
+    fun hideLoading() {
+        binding.mainProgressBarFrameLayout.visibility = View.GONE
+        binding.navHostFragment.visibility = View.VISIBLE
     }
 }

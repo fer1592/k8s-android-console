@@ -11,8 +11,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.fer1592.k8s_android_console.R
 import com.fer1592.k8s_android_console.databinding.FragmentClustersBinding
+import com.fer1592.k8s_android_console.util.EspressoIdlingResource
+import com.fer1592.k8s_android_console.view.activities.MainActivity
 import com.fer1592.k8s_android_console.view.adapters.ClusterItemAdapter
 import com.fer1592.k8s_android_console.viewmodel.ClustersViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class ClustersFragment : Fragment() {
     private var _binding: FragmentClustersBinding? = null
@@ -63,7 +66,12 @@ class ClustersFragment : Fragment() {
         binding.clustersList.adapter = clusterAdapter
         clustersViewModel.clusters.observe(viewLifecycleOwner) {
             it?.let {
-                clusterAdapter.submitList(it)
+                binding.clustersList.scheduleLayoutAnimation()
+                EspressoIdlingResource.increment()
+                val dataCommitCallback = Runnable {
+                    EspressoIdlingResource.decrement()
+                }
+                clusterAdapter.submitList(it, dataCommitCallback)
             }
         }
 
@@ -74,6 +82,20 @@ class ClustersFragment : Fragment() {
                     ClustersFragmentDirections.actionClustersFragmentToSetClusterFragment(clusterId)
                 this.findNavController().navigate(action)
                 clustersViewModel.onClusterEditNavigated()
+            }
+        }
+
+        // Sets observer to show progress bar when deleting a cluster
+        clustersViewModel.processingData.observe(viewLifecycleOwner) {
+            if (it) (activity as MainActivity).showLoading()
+            else (activity as MainActivity).hideLoading()
+        }
+
+        // Sets observer to show SnackBar with a custom message for the user
+        clustersViewModel.displayMessage.observe(viewLifecycleOwner) { messageID ->
+            messageID?.let {
+                Snackbar.make(binding.coordinatorLayout, messageID, Snackbar.LENGTH_SHORT).show()
+                clustersViewModel.clearMessages()
             }
         }
 
@@ -89,5 +111,10 @@ class ClustersFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.clustersList.scheduleLayoutAnimation()
     }
 }

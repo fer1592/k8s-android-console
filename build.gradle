@@ -8,7 +8,6 @@ buildscript {
     ext.retrofit2_version = '2.9.0'
     ext.coroutines_version = '1.6.1'
     ext.jupiter_version = '5.7.0'
-    ext.mockito_version = '4.0.0'
     ext.archTestingVersion = '2.1.0'
     ext.junit_version = '4.13.2'
     ext.androidx_test_version = '1.4.0'
@@ -16,6 +15,7 @@ buildscript {
     ext.ui_automator_version = '2.2.0'
     ext.compose_version = '1.1.1'
     ext.fragment_version = '1.4.1'
+    ext.mockk_version = '1.12.4'
 
     dependencies {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")

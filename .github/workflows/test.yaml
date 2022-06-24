@@ -1,34 +1,37 @@
 name: Test on Pull Request
 on: [pull_request]
 jobs:
-  #lint:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - name: Checkout code
-  #      uses: actions/checkout@v3
-#
-  #    - uses: actions/setup-java@v3
-  #      with:
-  #        distribution: 'zulu'
-  #        java-version: '11'
-  #        cache: gradle
-#
-  #    - name: ktlint
-  #      uses: ScaCap/action-ktlint@master
-  #      with:
-  #        github_token: ${{ secrets.github_token }}
-  #        reporter: github-pr-review # Change reporter
-  run-unit-test:
-    #needs: lint
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      #- name: install microk8s
-      #  uses: balchua/microk8s-actions@v0.2.1
-      #  with:
-      #    channel: ${{ matrix.microk8s-version }}
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: gradle
+
+      - name: ktlint
+        uses: ScaCap/action-ktlint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review # Change reporter
+  run-unit-test:
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        microk8s-version: ['latest/stable','1.20/stable','1.21/stable','1.22/stable','1.23/stable','1.24/stable']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: install microk8s
+        uses: balchua/microk8s-actions@v0.2.1
+        with:
+          channel: ${{ matrix.microk8s-version }}
 
       - uses: actions/setup-java@v3
         with:

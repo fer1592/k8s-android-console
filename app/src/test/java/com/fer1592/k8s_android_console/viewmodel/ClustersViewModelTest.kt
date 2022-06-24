@@ -52,7 +52,7 @@ class ClustersViewModelTest {
         mockkObject(EspressoIdlingResource)
         coEvery { repository.deleteCluster(cluster) } returns true
         clustersViewModel.deleteCluster(cluster)
-        coVerify(exactly = 1) { repository.deleteCluster(cluster) }
+        coVerify(exactly = 1) { repository.deleteCluster(any()) }
         val processingData = clustersViewModel.processingData.getOrAwaitValue()
         assertTrue("Process didn't finish", !processingData)
     }

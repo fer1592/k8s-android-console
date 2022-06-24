@@ -1,4 +1,4 @@
-package com.fer1592.k8s_android_console.data.repository
+package com.fer1592.k8s_android_console.data.repository_implementation
 
 import android.content.Context
 import androidx.room.Room
@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fer1592.k8s_android_console.data.db.ClusterDatabase
 import com.fer1592.k8s_android_console.data.model.Cluster
-import com.fer1592.k8s_android_console.data.repository_implementation.ClusterRepositoryImplementation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -27,7 +26,7 @@ class ClusterRepositoryImplementationTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, ClusterDatabase::class.java).build()
         clusterRepository = ClusterRepositoryImplementation()
-        cluster = Cluster(0, "Test Cluster", "192.168.1.1", 8443, "Bearer Token", "TestToken")
+        cluster = Cluster(0L, "Test Cluster", "192.168.1.1", 8443, "Bearer Token", "TestToken")
     }
 
     @After

@@ -9,7 +9,10 @@ interface ClusterRepository {
     fun getAllClusters(): LiveData<List<Cluster>>
 
     // Function to get a single cluster
-    fun getCluster(clusterId: Long): LiveData<Cluster>
+    suspend fun getCluster(clusterId: Long): LiveData<Cluster>
+
+    // Function to check if a cluster is valid
+    fun clusterIsValid(cluster: Cluster): Boolean
 
     // Function to add a new cluster
     suspend fun addCluster(cluster: Cluster): Boolean

@@ -1,11 +1,12 @@
 package com.fer1592.k8s_android_console.view.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +15,7 @@ import com.fer1592.k8s_android_console.R
 import com.fer1592.k8s_android_console.databinding.FragmentSetClusterBinding
 import com.fer1592.k8s_android_console.view.activities.MainActivity
 import com.fer1592.k8s_android_console.viewmodel.ClusterViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class SetClusterFragment : Fragment() {
     private var _binding: FragmentSetClusterBinding? = null
@@ -34,7 +36,6 @@ class SetClusterFragment : Fragment() {
         // We get the cluster id from the parameters and create the view model
         val clusterId = SetClusterFragmentArgs.fromBundle(requireArguments()).clusterId
         val clusterViewModel = ViewModelProvider(this)[ClusterViewModel::class.java]
-        clusterViewModel.getCluster(clusterId, authMethods)
 
         if (activity is MainActivity) {
             if (clusterId == (-1).toLong()) {
@@ -87,39 +88,29 @@ class SetClusterFragment : Fragment() {
             }
         }
 
-        // Sets observer to show a TOAST when connection is or not successful
-        clusterViewModel.connectionTestSuccessful.observe(viewLifecycleOwner) { connectionTestSuccessful ->
-            connectionTestSuccessful?.let {
-                if (it) Toast.makeText(context, R.string.connection_succeeded, Toast.LENGTH_SHORT).show()
-                else Toast.makeText(context, R.string.connection_failed, Toast.LENGTH_SHORT).show()
+        // Sets observer to show SnackBar with a custom message for the user
+        clusterViewModel.displayMessage.observe(viewLifecycleOwner) { messageID ->
+            messageID?.let {
+                Snackbar.make(binding.coordinatorLayout, messageID, Snackbar.LENGTH_SHORT).show()
+                clusterViewModel.clearMessages()
             }
         }
 
         // Sets observer to show progress bar and disable add/update buttons when submiting data
         clusterViewModel.processingData.observe(viewLifecycleOwner) {
+            // Hide keyboard when processing data
+            activity?.let { mainActivity ->
+                val imm = mainActivity.getSystemService(Context.INPUT_METHOD_SERVICE)
+                mainActivity.currentFocus?.let { currentFocus -> (imm as InputMethodManager).hideSoftInputFromWindow(currentFocus.applicationWindowToken, 0) }
+            }
             binding.addCluster.isEnabled = !it
             binding.updateCluster.isEnabled = !it
-            if (it) showLoading()
-            else hideLoading()
+            if (it) (activity as MainActivity).showLoading()
+            else (activity as MainActivity).hideLoading()
         }
 
-        // Sets observer to hide the progress bar when data is being load for edition
-        clusterViewModel.cluster?.observe(viewLifecycleOwner) {
-            hideLoading()
-        }
-
-        showLoading()
+        clusterViewModel.getCluster(clusterId, authMethods)
         return view
-    }
-
-    private fun showLoading() {
-        (activity as MainActivity).binding.mainProgressBar.visibility = View.VISIBLE
-        (activity as MainActivity).binding.navHostFragment.visibility = View.GONE
-    }
-
-    private fun hideLoading() {
-        (activity as MainActivity).binding.mainProgressBar.visibility = View.GONE
-        (activity as MainActivity).binding.navHostFragment.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

@@ -16,6 +16,7 @@ buildscript {
     ext.ui_automator_version = '2.2.0'
     ext.compose_version = '1.1.1'
     ext.fragment_version = '1.4.1'
+    ext.mockk_version = '1.12.4'
 
     dependencies {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")

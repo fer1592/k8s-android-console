@@ -9,7 +9,9 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="cluster_delete_confirmation_question">Are you sure you want to delete the cluster %1$s?</string>
-    <string name="address_hint">IP/HTTP Address</string>
+    <string name="cluster_deleted">Cluster was deleted</string>
+    <string name="cluster_deleted_failed">Error: Cluster couldn\'t be removed</string>
+    <string name="address_hint">IP/HTTP Address</string>W
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
     <string name="authentication_method">Authentication Method</string>
@@ -26,6 +28,8 @@
     <string name="validation_empty_cluster_bearer_token">Please enter a Bearer Token</string>
     <string name="connection_succeeded">Connection succeeded</string>
     <string name="connection_failed">Connection failed</string>
+    <string name="error_add_cluster">Error: cluster couldn\'t be added</string>
+    <string name="error_update_cluster">Error: cluster couldn\'t be updated</string>
     <string name="https">https://</string>
 
     <string-array name="auth_methods">

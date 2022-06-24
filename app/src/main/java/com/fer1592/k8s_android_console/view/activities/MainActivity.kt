@@ -1,6 +1,7 @@
 package com.fer1592.k8s_android_console.view.activities
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
@@ -12,7 +13,7 @@ import com.fer1592.k8s_android_console.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
-    val binding get() = _binding!!
+    private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -35,5 +36,15 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    fun showLoading() {
+        binding.mainProgressBarFrameLayout.visibility = View.VISIBLE
+        binding.navHostFragment.visibility = View.GONE
+    }
+
+    fun hideLoading() {
+        binding.mainProgressBarFrameLayout.visibility = View.GONE
+        binding.navHostFragment.visibility = View.VISIBLE
     }
 }

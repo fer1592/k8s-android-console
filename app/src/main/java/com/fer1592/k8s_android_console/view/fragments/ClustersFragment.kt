@@ -11,9 +11,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.fer1592.k8s_android_console.R
 import com.fer1592.k8s_android_console.databinding.FragmentClustersBinding
+import com.fer1592.k8s_android_console.util.EspressoIdlingResource
 import com.fer1592.k8s_android_console.view.activities.MainActivity
 import com.fer1592.k8s_android_console.view.adapters.ClusterItemAdapter
 import com.fer1592.k8s_android_console.viewmodel.ClustersViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class ClustersFragment : Fragment() {
     private var _binding: FragmentClustersBinding? = null
@@ -63,10 +65,13 @@ class ClustersFragment : Fragment() {
 
         binding.clustersList.adapter = clusterAdapter
         clustersViewModel.clusters.observe(viewLifecycleOwner) {
-            hideLoading()
             it?.let {
                 binding.clustersList.scheduleLayoutAnimation()
-                clusterAdapter.submitList(it)
+                EspressoIdlingResource.increment()
+                val dataCommitCallback = Runnable {
+                    EspressoIdlingResource.decrement()
+                }
+                clusterAdapter.submitList(it, dataCommitCallback)
             }
         }
 
@@ -82,8 +87,16 @@ class ClustersFragment : Fragment() {
 
         // Sets observer to show progress bar when deleting a cluster
         clustersViewModel.processingData.observe(viewLifecycleOwner) {
-            if (it) showLoading()
-            else hideLoading()
+            if (it) (activity as MainActivity).showLoading()
+            else (activity as MainActivity).hideLoading()
+        }
+
+        // Sets observer to show SnackBar with a custom message for the user
+        clustersViewModel.displayMessage.observe(viewLifecycleOwner) { messageID ->
+            messageID?.let {
+                Snackbar.make(binding.coordinatorLayout, messageID, Snackbar.LENGTH_SHORT).show()
+                clustersViewModel.clearMessages()
+            }
         }
 
         // Set on click listener for the FAB to add a new cluster
@@ -92,7 +105,6 @@ class ClustersFragment : Fragment() {
             this.findNavController().navigate(action)
         }
 
-        showLoading()
         return view
     }
 
@@ -104,15 +116,5 @@ class ClustersFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.clustersList.scheduleLayoutAnimation()
-    }
-
-    private fun showLoading() {
-        (activity as MainActivity).binding.mainProgressBar.visibility = View.VISIBLE
-        (activity as MainActivity).binding.navHostFragment.visibility = View.GONE
-    }
-
-    private fun hideLoading() {
-        (activity as MainActivity).binding.mainProgressBar.visibility = View.GONE
-        (activity as MainActivity).binding.navHostFragment.visibility = View.VISIBLE
     }
 }
